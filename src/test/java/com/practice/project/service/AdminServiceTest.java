@@ -3,11 +3,10 @@ package com.practice.project.service;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.admin.AdminCreateResponse;
 import com.practice.project.dto.admin.AdminUpdateRequest;
 import com.practice.project.exception.exhandler.ApiResourceDuplicateException;
 import com.practice.project.repository.AdminRepository;
-import org.junit.jupiter.api.Assertions;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,11 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+@Slf4j
 @SpringBootTest
 @Transactional
 class AdminServiceTest {
@@ -114,6 +111,28 @@ class AdminServiceTest {
         //adminService.update(no, request);
         Admin afterAdmin = adminService.findOne(no);
         assertEquals(afterAdmin.getAddress().getCountry(), request.getAddress().getCountry());
+    }
+
+    @Test
+    void 이메일기준_운영자_조회() {
+        Admin admin = Admin.builder()
+                .id("test")
+                .name("테스터")
+                .email("lee33398@namver.com")
+                .phNumber("0000")
+                .address(Address.builder()
+                        .country(Country.KR)
+                        .city("seoul")
+                        .street("1111")
+                        .zipcode("000000")
+                        .detailAddress("11111111")
+                        .build())
+                .build();
+        adminService.save(admin);
+        Admin findAdmin = adminService.findByEmail(admin.getEmail());
+
+        log.info("admin.name: {}", findAdmin.getName());
+        assertNotNull(findAdmin);
     }
 
 }

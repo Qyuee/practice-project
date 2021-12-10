@@ -20,5 +20,11 @@ spring:
     restart:
       enabled: false
 
+#  sql:
+#    init:
+#      data-locations:
+#      schema-locations:
+#      mode: always
+
 logging.level:
   org.hibernate.SQL: debug

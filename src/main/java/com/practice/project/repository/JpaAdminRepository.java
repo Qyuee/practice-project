@@ -1,3 +1,4 @@
+/*
 package com.practice.project.repository;
 
 import com.practice.project.domain.Admin;
@@ -66,3 +67,4 @@ public class JpaAdminRepository implements AdminRepository {
         return admin.getNo();
     }
 }
+*/

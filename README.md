@@ -122,6 +122,7 @@ DELETE /몰/{no}
 ### 5. Todo/Doing List
 - `완료` 수정 API를 실행 할 때, 객체타입을 지닌 엔티티 처리 방식 확인 필요
     - 엔티티는 `@DynamicUpdate`를 통해서 변경된 항목만 수정하도록하고, 복합 값 타입은 객체를 불변객체로 생성하고 수정 시, 객체 자체를 재생성하여 등록하도록 수정
-- `진행중` admin api controller mockMvc 테스트 케이스 작성
-- GET /api/admins -> pagenation 적용 필요
-- 몰(Mall) api 설계 필요
+- `완료` admin api controller mockMvc 테스트 케이스 작성
+- `완료` GET /api/admins -> pagenation 적용 필요
+- `진행중` 몰(Mall) Service Layer 테스트케이스 작성
+- `Todo` 몰(Mall) api 설계 필요

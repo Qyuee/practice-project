@@ -5,11 +5,15 @@ import com.practice.project.dto.admin.AdminUpdateRequest;
 import com.practice.project.exception.exhandler.ApiResourceDuplicateException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import com.practice.project.repository.AdminRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Service
 @Transactional(readOnly = true)
 public class AdminService {
     private final AdminRepository adminRepository;
@@ -24,13 +28,12 @@ public class AdminService {
     @Transactional
     public Long save(Admin admin) {
         validateDuplicateAdmin(admin);
-        return adminRepository.save(admin);
+        return adminRepository.save(admin).getNo();
     }
 
     @Transactional
     public void update(Long no, AdminUpdateRequest request) {
-        Admin admin = adminRepository.findOne(no);
-        Optional.ofNullable(admin).ifPresentOrElse(oldAdmin -> {
+        adminRepository.findById(no).ifPresentOrElse(oldAdmin -> {
             // oldAdmin의 Address와 updateAdmin의 Address 값이 다르면 변경 필요, 아니면 pass
             if (! oldAdmin.getAddress().equals(request.getAddress())) {
                 oldAdmin.changeAddress(request.getAddress());
@@ -42,16 +45,16 @@ public class AdminService {
     }
 
     public Admin findOne(Long no) {
-        Admin admin = adminRepository.findOne(no);
-        if (Optional.ofNullable(admin).isEmpty()) {
+        Optional<Admin> optionalAdmin = adminRepository.findById(no);
+        if (optionalAdmin.isEmpty()) {
             throw new ApiResourceNotFoundException("Admin not exist.");
         } else {
-            return admin;
+            return optionalAdmin.get();
         }
     }
 
-    public List<Admin> findAdmins() {
-        return adminRepository.findAll();
+    public List<Admin> findAdmins(Pageable pageable) {
+        return adminRepository.findAll(pageable).stream().collect(Collectors.toList());
     }
 
     public Admin findById(String id) {
@@ -69,8 +72,10 @@ public class AdminService {
 
     @Transactional
     public Long removeAdmin(Long no) {
-        Admin findAdmin = this.findOne(no);
-        return adminRepository.remove(findAdmin);
+        adminRepository.findById(no).ifPresentOrElse(adminRepository::delete, () -> {
+            throw new ApiResourceNotFoundException("Admin not exist.");
+        });
+        return no;
     }
 
     /**

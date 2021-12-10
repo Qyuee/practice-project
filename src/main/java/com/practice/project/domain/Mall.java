@@ -3,8 +3,7 @@ package com.practice.project.domain;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.BaseTime;
 import com.practice.project.domain.common.Country;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,7 +12,9 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name = "mall")
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Mall extends BaseTime {
     @Id
     @GeneratedValue
@@ -21,7 +22,7 @@ public class Mall extends BaseTime {
     private Long no;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "admin_no")
+    @JoinColumn(name = "admin_no", nullable = false, updatable = false)
     private Admin admin;
 
     @Column(name = "mall_name", length = 50, nullable = false, unique = true)

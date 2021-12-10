@@ -4,16 +4,14 @@ import com.practice.project.domain.Admin;
 import com.practice.project.dto.admin.*;
 import com.practice.project.dto.common.Result;
 import com.practice.project.service.AdminService;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +44,32 @@ public class AdminApiController {
         return new AdminCreateResponse(no, newAdmin.getId(), newAdmin.getName(), newAdmin.getEmail());
     }
 
-    @PutMapping("/api/admins/{no}")
+    @GetMapping("/api/admins")
+    @ApiOperation(value = "운영자 목록 조회")
+    public Result<List<AdminDto>> getAdmins(
+            Pageable pageable) {
+        List<Admin> findAdmins = adminService.findAdmins(pageable);
+        List<AdminDto> adminList = findAdmins.stream()
+                .map(AdminDto::new)
+                .collect(Collectors.toList());
+        return new Result<>(adminList.size(), adminList);
+    }
+
+    @GetMapping("/api/admins/id/{id}")
+    @ApiOperation(value = "운영자 id 기반 조회")
+    public Result<AdminDto> getAdminById(@PathVariable("id") String id) {
+        Admin findAdmin = adminService.findById(id);
+        return new Result(new AdminDto(findAdmin));
+    }
+
+    @GetMapping("/api/admins/{no}")
+    @ApiOperation(value = "운영자 no 기반 조회")
+    public Result<AdminDto> getAdminByNo(@PathVariable("no") Long no) {
+        Admin findAdmin = adminService.findOne(no);
+        return new Result(new AdminDto(findAdmin));
+    }
+
+    @PutMapping("/api/admins/no/{no}")
     //@ApiImplicitParam(name = "no", value = "운영자 고유번호") -> no를 문서상에서는 String 타입으로 보이게 함
     //@Todo 타입이 맞지않는 경우 발생하는 예외응답 처리 필요
     @ApiOperation(value = "운영자 정보 일부 수정", notes = "필수값: 운영자 고유번호")
@@ -57,32 +80,6 @@ public class AdminApiController {
         adminService.update(no, request);
         Admin admin = adminService.findOne(no);
         return new AdminUpdateResponse(admin);
-    }
-
-    @GetMapping("/api/admins")
-    @ApiOperation(value = "운영자 목록 조회")
-    public Result<List<AdminDto>> getAdmins(
-            @RequestParam(defaultValue = "0") int offset,
-            @RequestParam(defaultValue = "0") int limit) {
-        List<Admin> findAdmins = adminService.findAdmins();
-        List<AdminDto> adminList = findAdmins.stream()
-                .map(AdminDto::new)
-                .collect(Collectors.toList());
-        return new Result<>(adminList.size(), adminList);
-    }
-
-    @GetMapping("/api/admins/{id}")
-    @ApiOperation(value = "운영자 id 기반 조회")
-    public Result<AdminDto> getAdminById(@PathVariable("id") String id) {
-        Admin findAdmin = adminService.findById(id);
-        return new Result(new AdminDto(findAdmin));
-    }
-
-    @GetMapping("/api/admins/no/{no}")
-    @ApiOperation(value = "운영자 no 기반 조회")
-    public Result<AdminDto> getAdminByNo(@PathVariable("no") Long no) {
-        Admin findAdmin = adminService.findOne(no);
-        return new Result(new AdminDto(findAdmin));
     }
 
     @DeleteMapping("/api/admins/{no}")
