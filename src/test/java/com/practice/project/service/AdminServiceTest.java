@@ -3,8 +3,8 @@ package com.practice.project.service;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.admin.AdminUpdateRequest;
-import com.practice.project.exception.exhandler.ApiResourceDuplicateException;
+import com.practice.project.dto.admin.AdminUpdateReqDto;
+import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.repository.AdminRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ class AdminServiceTest {
                 .build();
 
         // 예외 발생 확인
-        ApiResourceDuplicateException exception = assertThrows(ApiResourceDuplicateException.class, () -> {
+        ApiResourceConflictException exception = assertThrows(ApiResourceConflictException.class, () -> {
             adminService.save(firstAdmin);
         }, "회원중복 예외 예상");
         String message = exception.getMessage();
@@ -90,7 +90,7 @@ class AdminServiceTest {
 
         Admin beforeAdmin = adminService.findOne(no);
 
-        AdminUpdateRequest request = new AdminUpdateRequest("0000-0",
+        AdminUpdateReqDto request = new AdminUpdateReqDto("0000-0",
                 Address.builder()
                         .country(Country.EN)
                         .city("seoul")

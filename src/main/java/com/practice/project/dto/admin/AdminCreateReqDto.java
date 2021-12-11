@@ -14,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminCreateRequest {
+public class AdminCreateReqDto {
     // <required>
     @NotBlank(message = "Admin's id is required")
     @ApiModelProperty(position = 1, notes = "운영자 아이디", example = "lee33398")

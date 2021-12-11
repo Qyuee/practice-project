@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AdminCreateResponse {
+public class AdminCreateResDto {
     @ApiModelProperty(position = 1, example = "1")
     private Long no;
 

@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AdminUpdateResponse {
+public class AdminUpdateResDto {
     private Long no;
     private String id;
 
-    public AdminUpdateResponse(Admin admin) {
+    public AdminUpdateResDto(Admin admin) {
         this.no = admin.getNo();
         this.id = admin.getId();
     }

@@ -21,8 +21,9 @@ dependencies {
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
-	// 쿼리 파라미터를 보기 편하기 남겨준다.
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+	// utils
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'	// 쿼리 파라미터를 보기 편하기 남겨준다.
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.4'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

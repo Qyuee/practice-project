@@ -5,7 +5,6 @@ import com.practice.project.dto.admin.*;
 import com.practice.project.dto.common.Result;
 import com.practice.project.service.AdminService;
 import io.swagger.annotations.ApiOperation;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ public class AdminApiController {
     @PostMapping("/api/admins")
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "운영자 가입", notes = "필수값: 아이디, 이메일, 이름")
-    public AdminCreateResponse saveAdmin(@RequestBody AdminCreateRequest request) {
+    public AdminCreateResDto saveAdmin(@RequestBody AdminCreateReqDto request) {
         Admin admin = Admin.builder()
                 .id(request.getId())
                 .email(request.getEmail())
@@ -41,7 +40,7 @@ public class AdminApiController {
 
         Long no = adminService.save(admin);
         Admin newAdmin = adminService.findOne(no);
-        return new AdminCreateResponse(no, newAdmin.getId(), newAdmin.getName(), newAdmin.getEmail());
+        return new AdminCreateResDto(no, newAdmin.getId(), newAdmin.getName(), newAdmin.getEmail());
     }
 
     @GetMapping("/api/admins")
@@ -73,13 +72,13 @@ public class AdminApiController {
     //@ApiImplicitParam(name = "no", value = "운영자 고유번호") -> no를 문서상에서는 String 타입으로 보이게 함
     //@Todo 타입이 맞지않는 경우 발생하는 예외응답 처리 필요
     @ApiOperation(value = "운영자 정보 일부 수정", notes = "필수값: 운영자 고유번호")
-    public AdminUpdateResponse updateAdmin(
+    public AdminUpdateResDto updateAdmin(
             @PathVariable("no") Long no,
-            @RequestBody AdminUpdateRequest request) {
+            @RequestBody AdminUpdateReqDto request) {
 
         adminService.update(no, request);
         Admin admin = adminService.findOne(no);
-        return new AdminUpdateResponse(admin);
+        return new AdminUpdateResDto(admin);
     }
 
     @DeleteMapping("/api/admins/{no}")

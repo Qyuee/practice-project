@@ -1,8 +1,8 @@
 package com.practice.project.service;
 
 import com.practice.project.domain.Admin;
-import com.practice.project.dto.admin.AdminUpdateRequest;
-import com.practice.project.exception.exhandler.ApiResourceDuplicateException;
+import com.practice.project.dto.admin.AdminUpdateReqDto;
+import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import com.practice.project.repository.AdminRepository;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +32,7 @@ public class AdminService {
     }
 
     @Transactional
-    public void update(Long no, AdminUpdateRequest request) {
+    public void update(Long no, AdminUpdateReqDto request) {
         adminRepository.findById(no).ifPresentOrElse(oldAdmin -> {
             // oldAdmin의 Address와 updateAdmin의 Address 값이 다르면 변경 필요, 아니면 pass
             if (! oldAdmin.getAddress().equals(request.getAddress())) {
@@ -86,7 +86,7 @@ public class AdminService {
     private void validateDuplicateAdmin(Admin admin) {
         List<Admin> findAdmins = adminRepository.findByIdOrEmail(admin.getId(), admin.getEmail());
         if (! findAdmins.isEmpty()) {
-            throw new ApiResourceDuplicateException("Admin already exists.");
+            throw new ApiResourceConflictException("Admin already exists.");
         }
     }
 }

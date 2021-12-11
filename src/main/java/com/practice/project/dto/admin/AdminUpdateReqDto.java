@@ -12,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminUpdateRequest {
+public class AdminUpdateReqDto {
     // <optional>
     @ApiModelProperty(position = 1, notes = "휴대전화번호", example = "010-0000-0000")
     private String phNumber;
