@@ -6,7 +6,6 @@ import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.DtoImpl;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.modelmapper.ModelMapper;
@@ -27,7 +26,7 @@ public class MallDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class MallCreateReq {
+    public static class MallCreateReqDto {
         // required
         @NotNull
         @ApiModelProperty(position = 1, notes = "운영자 고유번호", example = "1")
@@ -47,11 +46,11 @@ public class MallDto {
         @JsonIgnore
         private Admin admin;
 
-        public static MallCreateReq of(Mall mall) {
-            return modelMapper.map(mall, MallCreateReq.class);
+        public static MallCreateReqDto of(Mall mall) {
+            return modelMapper.map(mall, MallCreateReqDto.class);
         }
 
-        public static Mall toEntity(MallCreateReq createRequest) {
+        public static Mall toEntity(MallCreateReqDto createRequest) {
             return Mall.builder()
                     .admin(createRequest.getAdmin())
                     .name(createRequest.getMallName())
@@ -65,32 +64,26 @@ public class MallDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class Response {
+    public static class MallResDto {
         @NotNull
-        @ApiModelProperty(position = 1, notes = "몰 고유번호", example = "1")
         private Long mallNo;
-
+        private Long adminNo;
         @NotNull
-        @ApiModelProperty(position = 2, notes = "몰 이름", example = "테스트 쇼핑몰")
         private String mallName;
-
         @NotNull
-        @ApiModelProperty(position = 3, notes = "지원 국가", example = "KR")
         private Country country;
-
-        @ApiModelProperty(position = 4, notes = "사업장 주소정보")
         private Address address;
 
-        public static Response of(Mall mall) {
-            return modelMapper.map(mall, Response.class);
+        public static MallResDto of(Mall mall) {
+            return modelMapper.map(mall, MallResDto.class);
         }
 
-        public static Mall toEntity(Response response) {
+        public static Mall toEntity(MallResDto mallResDto) {
             return Mall.builder()
-                    .no(response.getMallNo())
-                    .name(response.getMallName())
-                    .countryType(response.getCountry())
-                    .address(response.getAddress())
+                    .no(mallResDto.getMallNo())
+                    .name(mallResDto.getMallName())
+                    .countryType(mallResDto.getCountry())
+                    .address(mallResDto.getAddress())
                     .build();
         }
     }

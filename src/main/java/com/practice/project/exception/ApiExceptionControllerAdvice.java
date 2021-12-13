@@ -1,5 +1,6 @@
 package com.practice.project.exception;
 
+import com.practice.project.exception.exhandler.ApiBadRequestException;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class ApiExceptionControllerAdvice {
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+    @ExceptionHandler({MethodArgumentNotValidException.class, ApiBadRequestException.class})
+    public ResponseEntity<ErrorResponse> ApiBadRequestExHandler(MethodArgumentNotValidException e) {
         return ResponseEntity.status(ErrorCase.BAD_REQUEST.getHttpStatus().value())
                 .body(new ErrorResponse(ErrorCase.BAD_REQUEST, e.getMessage()));
     }

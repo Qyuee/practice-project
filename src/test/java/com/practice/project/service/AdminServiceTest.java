@@ -51,7 +51,6 @@ class AdminServiceTest {
     }
 
     @Test
-    @Rollback
     void join_운영자_아이디중복() {
         Admin firstAdmin = Admin.builder()
                 .id("lee33398")
@@ -59,9 +58,17 @@ class AdminServiceTest {
                 .email("lee33398@naver.com")
                 .build();
 
+        adminService.save(firstAdmin);
+
+        Admin secondAdmin = Admin.builder()
+                .id("lee33398")
+                .name("이동석")
+                .email("lee33398@naver.com")
+                .build();
+
         // 예외 발생 확인
         ApiResourceConflictException exception = assertThrows(ApiResourceConflictException.class, () -> {
-            adminService.save(firstAdmin);
+            adminService.save(secondAdmin);
         }, "회원중복 예외 예상");
         String message = exception.getMessage();
         assertEquals("Admin already exists.", message);

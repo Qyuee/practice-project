@@ -6,12 +6,12 @@ import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.mall.MallDto.MallCreateReq;
+import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.practice.project.dto.mall.MallDto.MallCreateReq.*;
+import static com.practice.project.dto.mall.MallDto.MallCreateReqDto.*;
 
 @Slf4j
 class MallDtoTest {
@@ -41,7 +41,7 @@ class MallDtoTest {
                 .address(address)
                 .build();
 
-        MallCreateReq test = of(mall);
+        MallCreateReqDto test = of(mall);
         log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(test));
     }
 
@@ -57,7 +57,7 @@ class MallDtoTest {
                 .email("lee33398@naver.com")
                 .build();
 
-        MallCreateReq mallDto = builder()
+        MallCreateReqDto mallDto = builder()
                 .admin(admin)
                 .mallName("테스트몰")
                 .build();

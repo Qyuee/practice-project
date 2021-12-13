@@ -107,4 +107,11 @@ class MallRepositoryTest {
             log.info(mall.toString());
         }
     }
+
+    @Test
+    @DisplayName("몰 name으로 조회")
+    void 몰_정보_조회_by_name() {
+        Mall findNotExistsMall = mallRepository.findByName("테스트몰");
+        Assertions.assertNull(findNotExistsMall);
+    }
 }
