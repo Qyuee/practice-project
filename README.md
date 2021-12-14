@@ -125,4 +125,7 @@ DELETE /몰/{no}
 - `완료` admin api controller mockMvc 테스트 케이스 작성
 - `완료` GET /api/admins -> pagenation 적용 필요
 - `진행중` 몰(Mall) Service Layer 테스트케이스 작성
+- `진행중` Pageable Validation 처리
+  - 유효하지 않는 파라미터 처리 -> 제외하고 값 응답
+  - 
 - `Todo` 몰(Mall) api 설계 필요

@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
 @Retention(RUNTIME)
 public @interface AllowedSortProperties {
-    String message() default "{com.practice.project.validator.AllowedSortProperties.java}";
+    String message() default "You should insert valid sort key.";
 
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
