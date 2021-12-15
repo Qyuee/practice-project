@@ -29,20 +29,12 @@ public class MallDto {
     public static class MallCreateReqDto {
         // required
         @NotNull
-        @ApiModelProperty(position = 1, notes = "운영자 고유번호", example = "1")
         private Long adminNo;
-
         @NotNull
-        @ApiModelProperty(position = 2, notes = "몰 이름", example = "테스트 쇼핑몰")
         private String mallName;
-
         @NotNull
-        @ApiModelProperty(position = 3, notes = "지원 국가", example = "KR")
         private Country country;
-
-        @ApiModelProperty(position = 4, notes = "사업장 주소정보")
         private Address address;
-
         @JsonIgnore
         private Admin admin;
 

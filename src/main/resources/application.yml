@@ -11,10 +11,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
+    show-sql: false
+
 
   devtools:
     restart:

@@ -1,5 +1,7 @@
 package com.practice.project.api;
 
+import com.practice.project.domain.Admin;
+import com.practice.project.dto.admin.AdminDto;
 import com.practice.project.dto.common.Result;
 import com.practice.project.dto.mall.MallDto.MallResDto;
 import com.practice.project.service.MallService;
@@ -10,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,11 +25,11 @@ public class MallApiController {
     private final MallService mallService;
 
     /*
-    GET /api/mall -> 몰 정보 리스트 (pageable)
+    GET /api/malls -> 몰 정보 리스트 (pageable)
      - 운영자와 관련없이 전체몰의 정보를 찾기 위함
      - 파라미터: 국가코드, 몰 이름
 
-    GET /api/mall/{admin_id} -> 운영자 ID기반 몰 정보 찾기
+    GET /api/admin/{id}/malls -> 운영자 ID기반 몰 정보 찾기
      - 파라미터: 국가코드 -> 국가별 몰 정보를 찾기 위함
 
     POST /api/mall
@@ -43,4 +47,13 @@ public class MallApiController {
         List<MallResDto> mallList = mallService.findAll(pageable);
         return new Result<>(mallList.size(), mallList);
     }
+
+    @GetMapping("/api/admin/{id}/malls")
+    @ApiOperation(value = "운영자의 몰 리스트")
+    public Result<List<MallResDto>> getAdminMalls(@PathVariable("id") String id) {
+        List<MallResDto> mallList = mallService.findByAdminId(id);
+        return new Result<>(mallList.size(), mallList);
+    }
+
+    //@Todo 특정 운영자에 몰 생성 api
 }

@@ -54,21 +54,14 @@ public class AdminApiController {
         return new Result<>(adminList.size(), adminList);
     }
 
-    @GetMapping("/api/admins/id/{id}")
+    @GetMapping("/api/admins/{id}")
     @ApiOperation(value = "운영자 id 기반 조회")
     public Result<AdminDto> getAdminById(@PathVariable("id") String id) {
         Admin findAdmin = adminService.findById(id);
         return new Result(new AdminDto(findAdmin));
     }
 
-    @GetMapping("/api/admins/{no}")
-    @ApiOperation(value = "운영자 no 기반 조회")
-    public Result<AdminDto> getAdminByNo(@PathVariable("no") Long no) {
-        Admin findAdmin = adminService.findOne(no);
-        return new Result(new AdminDto(findAdmin));
-    }
-
-    @PutMapping("/api/admins/no/{no}")
+    @PutMapping("/api/admins/{no}")
     //@ApiImplicitParam(name = "no", value = "운영자 고유번호") -> no를 문서상에서는 String 타입으로 보이게 함
     //@Todo 타입이 맞지않는 경우 발생하는 예외응답 처리 필요
     @ApiOperation(value = "운영자 정보 일부 수정", notes = "필수값: 운영자 고유번호")

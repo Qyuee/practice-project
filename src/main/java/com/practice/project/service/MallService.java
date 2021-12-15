@@ -1,9 +1,12 @@
 package com.practice.project.service;
 
+import com.practice.project.domain.Admin;
+import com.practice.project.domain.Mall;
 import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
 import com.practice.project.dto.mall.MallDto.MallResDto;
 import com.practice.project.exception.exhandler.ApiBadRequestException;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
+import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import com.practice.project.repository.AdminRepository;
 import com.practice.project.repository.MallRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -37,10 +40,19 @@ public class MallService {
         return MallResDto.of(mallRepository.save(MallCreateReqDto.toEntity(mallCreateReqDto)));
     }
 
+    // @Todo 정렬 파라미터 지원 validation
     public List<MallResDto> findAll(Pageable pageable) {
-        // 정렬 파라미터 지원 validation
         // validateSearchMall(pageable.getSort());
         return mallRepository.findAll(pageable).stream().map(MallResDto::of).collect(Collectors.toList());
+    }
+
+    public List<MallResDto> findByAdminId(String id) {
+        Optional<Admin> admin = adminRepository.findById(id);
+        if (admin.isEmpty()) {
+            throw new ApiResourceNotFoundException("Admin not exist.");
+        }
+
+        return mallRepository.findMallByAdmin(admin.get()).stream().map(MallResDto::of).collect(Collectors.toList());
     }
 
     private void validateSaveMall(MallCreateReqDto req) {

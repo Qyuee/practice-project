@@ -6,6 +6,8 @@ import com.practice.project.domain.common.Country;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface MallRepository extends JpaRepository<Mall, Long> {
     /*@Query("select 1 from mall m where m.admin_no = :adminNo and m.country = :coutry limit 1")
@@ -13,4 +15,5 @@ public interface MallRepository extends JpaRepository<Mall, Long> {
 
     boolean existsMallByAdminAndCountryType(Admin admin, Country country);
     Mall findByName(String name);
+    List<Mall> findMallByAdmin(Admin admin);
 }
