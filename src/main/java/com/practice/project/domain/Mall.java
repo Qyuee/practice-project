@@ -7,6 +7,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -24,6 +27,9 @@ public class Mall extends BaseTime {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "admin_no", nullable = false, updatable = false)
     private Admin admin;
+
+    @OneToMany(mappedBy = "mall")
+    private List<Member> memberList = new ArrayList<>();
 
     @Column(name = "mall_name", length = 50, nullable = false, unique = true)
     private String name;

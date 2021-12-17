@@ -33,7 +33,7 @@ public class Admin extends BaseTime {
     @Column(name = "admin_id", unique = true, updatable = false, nullable = false)
     private String id;
 
-    @Column(length = 100, unique = true, updatable = false, nullable = false)
+    @Column(length = 50, unique = true, updatable = false, nullable = false)
     private String email;
 
     @Column(name = "admin_name", updatable = false, nullable = false)

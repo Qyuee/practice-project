@@ -1,7 +1,12 @@
 package com.practice.project.dto.admin;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
+@Data
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AdminSearchDto {
     @ApiModelProperty(position = 0, example = "1")
     private Long no;

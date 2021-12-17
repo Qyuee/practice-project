@@ -1,5 +1,7 @@
 package com.practice.project.domain.common;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -19,6 +21,7 @@ import javax.persistence.Enumerated;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Address {
     @Enumerated(EnumType.STRING)
     private Country country;

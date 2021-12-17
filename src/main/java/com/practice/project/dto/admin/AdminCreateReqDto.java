@@ -1,5 +1,7 @@
 package com.practice.project.dto.admin;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,6 +16,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AdminCreateReqDto {
     // <required>
     @NotBlank(message = "Admin's id is required")

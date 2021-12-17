@@ -1,6 +1,8 @@
 package com.practice.project.dto.admin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.common.Address;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AdminDto {
 
     @ApiModelProperty(position = 0, example = "1")

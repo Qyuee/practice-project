@@ -46,10 +46,7 @@ class MallServiceTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
-    EntityManager em;
-
-    @BeforeAll
+    //@BeforeAll
     @Transactional
     void 테스트_데이터_설정() {
         Admin admin1 = Admin.builder()
@@ -98,7 +95,7 @@ class MallServiceTest {
         MallCreateReqDto req = MallCreateReqDto.builder()
                 .admin(admin)
                 .mallName("테스트몰")
-                .country(Country.KR)
+                .countryType(Country.KR)
                 .build();
 
         MallResDto savedMall = mallService.save(req);
@@ -121,7 +118,7 @@ class MallServiceTest {
         MallCreateReqDto req = MallCreateReqDto.builder()
                 .admin(admin)
                 .mallName("테스트몰")
-                .country(Country.KR)
+                .countryType(Country.KR)
                 .build();
 
         mallService.save(req);
@@ -130,7 +127,7 @@ class MallServiceTest {
         MallCreateReqDto req2 = MallCreateReqDto.builder()
                 .admin(admin)
                 .mallName("테스트몰2")
-                .country(Country.KR)
+                .countryType(Country.KR)
                 .build();
 
         ApiResourceConflictException exception = assertThrows(ApiResourceConflictException.class, () -> {
@@ -159,14 +156,14 @@ class MallServiceTest {
         MallCreateReqDto req = MallCreateReqDto.builder()
                 .admin(admin)
                 .mallName("테스트몰")
-                .country(Country.KR)
+                .countryType(Country.KR)
                 .build();
         mallService.save(req);
 
         MallCreateReqDto req2 = MallCreateReqDto.builder()
                 .admin(admin)
                 .mallName("테스트몰")
-                .country(Country.EN)
+                .countryType(Country.EN)
                 .build();
 
         ApiResourceConflictException exception = assertThrows(ApiResourceConflictException.class, () -> {
@@ -192,7 +189,7 @@ class MallServiceTest {
         MallCreateReqDto req = MallCreateReqDto.builder()
                 .admin(admin)
                 .mallName("테스트몰")
-                .country(Country.KR)
+                .countryType(Country.KR)
                 .build();
 
         mallService.save(req);
@@ -203,7 +200,7 @@ class MallServiceTest {
     void 몰_list() {
         int page = 0;
         int size = 5;
-        String sortKey = "name, countryType";
+        String sortKey = "countryType";
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortKey));
 
         List<MallResDto> mallList = mallService.findAll(pageable);

@@ -16,6 +16,7 @@ SpringBoot, JPA, gradle, h2, swagger
  몰(Mall)
  - (★)한명의 운영자는 여러개의 쇼핑몰을 가질(운영 할) 수 있다.
  - 기본적으로는 한국어 쇼핑몰을 생성하고 선택에따라서 해외몰을 생성/운영 할 수 있다.
+ - 동일한 국가코드의 몰을 중복으로 생성 할 수 없다.
  - 몰의 이름은 50자 제한이 있고, 중복 될 수 없다.
  - 몰에 진행중인 주문이 있는 경우 제거(폐업) 할 수 없다.
  ```
@@ -28,7 +29,7 @@ SpringBoot, JPA, gradle, h2, swagger
 
 ### 2. 도메인 설계
 ``운영자(Admin)``
-- 운영자 고유ID(pk)
+- 운영자 고유번호(pk)
 - 몰 정보(양방향 관계)
 - 운영자 아이디 (중복검사 및 제한문자 vaildation 적용)
 - 운영자명
@@ -38,17 +39,17 @@ SpringBoot, JPA, gradle, h2, swagger
 - 마지막 수정일 (LocalDateTime)
 
 ``몰(Mall) -> TODO``
-- 상점고유ID (pk)
-- 운영자 고유ID (fk)
+- 상점 고유번호 (pk)
+- 운영자 고유번호 (fk)
 - 상점이름
-- 상점 주도메인
 - 지원국가코드
 - 주소정보 -> embeded로 통합 (각 property는 오버라이딩해서 사업장 주소로 변경)
 - 개설일 (LocalDateTime)
+- 마지막 수정일 (LocalDateTime)
 
 ``쇼핑몰회원(member) -> TODO``
 - 회원고유ID (pk)
-- 상점번호 (fk, 어느상점의 회원인가?)
+- 상점 고유번호 (fk, 어느상점의 회원인가?)
 - 회원아이디 (unique key, 중복검사 및 제한문자 vaildation 적용)
 - 회원명
 - 성별
@@ -82,14 +83,16 @@ SpringBoot, JPA, gradle, h2, swagger
 - Seed Data 작성
 - repository, service layer 작성
 - 도메인별 테스트 케이스 작성
-- 컨트롤러
+- 컨트롤러 작성
 
 ### 4. api 설계
 ``운영자(Admin) - Done``
 ```
-GET /운영자
+GET /
  - pagenation 적용 필요 (default 값 필요)
+```
 
+```
 GET /운영자/운영자ID
  - 개인정보인 경우에는 암호화하여 확인 할 수 있도록 혹은 조회에서 제외
 

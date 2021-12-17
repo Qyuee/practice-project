@@ -2,29 +2,24 @@ package com.practice.project.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.Admin;
-import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Country;
+import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
 import com.practice.project.repository.AdminRepository;
 import com.practice.project.repository.MallRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,10 +66,34 @@ class MallApiControllerIntegrationTest {
     }*/
 
     @Test
+    @DisplayName("POST /api/admin/{id}/malls")
+    void POST_특정_운영자_몰() throws Exception {
+        Admin admin = Admin.builder()
+                .id("testAdmin")
+                .email("testAdmin@naver.com")
+                .name("테스터")
+                .build();
+        adminRepository.save(admin);
+
+        MallCreateReqDto request = MallCreateReqDto.builder()
+                .mallName("테스트몰")
+                .countryType(Country.JP)
+                .build();
+
+        String body = objectMapper.writeValueAsString(request);
+        mockMvc.perform(post("/api/admin/{id}/malls", admin.getId())
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
     @DisplayName("GET /api/malls")
     void GET_몰_리스트() throws Exception {
         mockMvc.perform(get("/api/malls")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andDo(result -> {
                     String responseBody = objectMapper.writerWithDefaultPrettyPrinter()

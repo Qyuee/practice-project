@@ -1,59 +1,57 @@
 package com.practice.project.api;
 
 import com.practice.project.domain.Admin;
+import com.practice.project.domain.Mall;
 import com.practice.project.dto.admin.AdminDto;
 import com.practice.project.dto.common.Result;
+import com.practice.project.dto.mall.MallDto;
+import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
 import com.practice.project.dto.mall.MallDto.MallResDto;
 import com.practice.project.service.MallService;
 import com.practice.project.validator.AllowedSortProperties;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
 import java.util.List;
 
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
 public class MallApiController {
     private final MallService mallService;
 
-    /*
-    GET /api/malls -> 몰 정보 리스트 (pageable)
-     - 운영자와 관련없이 전체몰의 정보를 찾기 위함
-     - 파라미터: 국가코드, 몰 이름
-
-    GET /api/admin/{id}/malls -> 운영자 ID기반 몰 정보 찾기
-     - 파라미터: 국가코드 -> 국가별 몰 정보를 찾기 위함
-
-    POST /api/mall
-     - 운영자 고유번호
-     - 몰 이름
-     - 국가코드 (default: KR)
-     - 주소정보
-     */
-
-    @GetMapping("/api/malls")
+    @GetMapping(value = "/api/malls", produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "몰 리스트 조회")
     public Result<List<MallResDto>> getMalls(
-            @AllowedSortProperties({"name", "countryType"})
-            @PageableDefault(size=5, sort="name") Pageable pageable) {
+            @AllowedSortProperties({"name", "countryType", "createdDate"})
+            @PageableDefault(size=5, sort="name", direction = Sort.Direction.ASC) Pageable pageable) {
         List<MallResDto> mallList = mallService.findAll(pageable);
         return new Result<>(mallList.size(), mallList);
     }
 
-    @GetMapping("/api/admin/{id}/malls")
+    @GetMapping(value = "/api/admin/{id}/malls", produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "운영자의 몰 리스트")
     public Result<List<MallResDto>> getAdminMalls(@PathVariable("id") String id) {
         List<MallResDto> mallList = mallService.findByAdminId(id);
         return new Result<>(mallList.size(), mallList);
     }
 
-    //@Todo 특정 운영자에 몰 생성 api
+    @PostMapping(value = "/api/admin/{id}/malls", produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "특정 운영자에 몰 추가")
+    public Result<MallResDto> createMall(
+            @PathVariable("id") String id,
+            @RequestBody MallCreateReqDto reqDto) {
+
+        reqDto.setAdminId(id);
+        MallResDto newMall = mallService.save(reqDto);
+        return new Result<>(newMall);
+    }
 }

@@ -2,11 +2,14 @@ package com.practice.project.dto.mall;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -14,7 +17,6 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 
 @Data
-@Component
 @RequiredArgsConstructor
 public class MallDto {
     private static ModelMapper modelMapper = new ModelMapper();
@@ -25,16 +27,21 @@ public class MallDto {
     @Data
     @Builder
     @AllArgsConstructor
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MallCreateReqDto {
         // required
         @NotNull
-        private Long adminNo;
+        private String adminId;
+
         @NotNull
         private String mallName;
+
         @NotNull
-        private Country country;
+        private Country countryType;
+
         private Address address;
+
         @JsonIgnore
         private Admin admin;
 
@@ -44,26 +51,31 @@ public class MallDto {
 
         public static Mall toEntity(MallCreateReqDto createRequest) {
             return Mall.builder()
-                    .admin(createRequest.getAdmin())
                     .name(createRequest.getMallName())
-                    .countryType(createRequest.getCountry())
+                    .admin(createRequest.getAdmin())
+                    .countryType(createRequest.getCountryType())
                     .build();
         }
     }
 
     @Data
     @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MallResDto {
         @NotNull
         private Long mallNo;
+
         private Long adminNo;
+
         @NotNull
         private String mallName;
+
         @NotNull
-        private Country country;
+        private Country countryType;
+
         private Address address;
 
         public static MallResDto of(Mall mall) {
@@ -74,7 +86,7 @@ public class MallDto {
             return Mall.builder()
                     .no(mallResDto.getMallNo())
                     .name(mallResDto.getMallName())
-                    .countryType(mallResDto.getCountry())
+                    .countryType(mallResDto.getCountryType())
                     .address(mallResDto.getAddress())
                     .build();
         }
