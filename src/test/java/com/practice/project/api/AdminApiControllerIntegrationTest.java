@@ -39,19 +39,6 @@ class AdminApiControllerIntegrationTest {
     @Autowired
     private AdminRepository adminRepository;
 
-    @BeforeAll
-    @Transactional
-    void 테스트_데이터_설정() {
-        for (int i = 1; i < 30; i++) {
-            adminRepository.save(Admin.builder()
-                    .id("tester_"+i)
-                    .name("테스트 운영자"+i)
-                    .email("lee33398"+i+"@naver.com")
-                    .build()
-            );
-        }
-    }
-
     @Test
     @DisplayName("POST /api/admins")
     void POST_운영자_등록() throws Exception {
@@ -68,7 +55,7 @@ class AdminApiControllerIntegrationTest {
     @DisplayName("GET /api/admins, +pageable")
     void GET_운영자_리스트() throws Exception {
         mockMvc.perform(get("/api/admins")
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .param("page", String.valueOf(0))
                     .param("size", String.valueOf(5)))
                 .andDo(print())
@@ -77,15 +64,13 @@ class AdminApiControllerIntegrationTest {
                             .writeValueAsString(result.getResponse().getContentAsString());
                     log.info(responseBody);
                 })
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$['data']", hasSize(5)))
-                .andExpect(jsonPath("$['data'][0].id", "lee33398").exists());
+                .andExpect(status().is2xxSuccessful());
     }
 
     @Test
-    @DisplayName("GET /api/admins/id/{id}")
+    @DisplayName("GET /api/admins/{id}")
     void GET_운영자_조회_by_id() throws Exception {
-        mockMvc.perform(get("/api/admins/id/tester_10")
+        mockMvc.perform(get("/api/admins/{id}", "lee33397")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andDo(result -> {
@@ -94,21 +79,6 @@ class AdminApiControllerIntegrationTest {
                     log.info(responseBody);
                 })
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$['data'].id", "tester_10").exists());
-    }
-
-    @Test
-    @DisplayName("GET /api/admins/{no}")
-    void GET_운영자_조회_by_no() throws Exception {
-        mockMvc.perform(get("/api/admins/10")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andDo(result -> {
-                    String responseBody = objectMapper.writerWithDefaultPrettyPrinter()
-                            .writeValueAsString(result.getResponse().getContentAsString());
-                    log.info(responseBody);
-                })
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$['data'].no", "10").exists());
+                .andExpect(jsonPath("$['data'].id", "lee33397").exists());
     }
 }

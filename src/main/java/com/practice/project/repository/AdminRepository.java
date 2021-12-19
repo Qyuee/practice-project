@@ -20,4 +20,6 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     @Query("select a from Admin a join fetch a.mallList")
     List<Admin> findAllJoinFetch();
+
+    Admin findByNo(Long no);
 }

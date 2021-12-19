@@ -6,12 +6,12 @@ import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
+import com.practice.project.dto.MallDto.MallCreateReqDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.practice.project.dto.mall.MallDto.MallCreateReqDto.*;
+import static com.practice.project.dto.MallDto.MallCreateReqDto.*;
 
 @Slf4j
 class MallDtoTest {

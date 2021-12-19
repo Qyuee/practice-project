@@ -14,6 +14,7 @@ import javax.persistence.Enumerated;
  * - 가급적 flat하게 사용해야 한다.
  * - 값 타입이 복잡해지면 차라리 일대다 관계를 적용하는걸 고려해볼것
  * - 동일성 비교 (==)
+ * - 엔티티가 아니므로 추적이 불가능하다.
  */
 @Embeddable
 @Getter

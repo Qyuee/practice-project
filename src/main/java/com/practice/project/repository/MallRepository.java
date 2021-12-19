@@ -16,4 +16,5 @@ public interface MallRepository extends JpaRepository<Mall, Long> {
     boolean existsMallByAdminAndCountryType(Admin admin, Country country);
     Mall findByName(String name);
     List<Mall> findMallByAdmin(Admin admin);
+    Mall findByNo(Long no);
 }

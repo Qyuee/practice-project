@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
-import com.practice.project.dto.mall.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallCreateReqDto;
+import com.practice.project.dto.MallDto.MallResDto;
 import com.practice.project.exception.exhandler.ApiBadRequestException;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.repository.AdminRepository;
@@ -19,8 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
 
 import java.util.List;
 

@@ -26,7 +26,7 @@ public class AdminApiController {
      * - 반대로 엔티티가 바뀐다고 api 스펙이 변경되는 것도 문제이다.
      * - 필요에따라 api스펙이 추가/수정 될 때, dto를 별도로 생성하여 대응하는 것이 좋다. (회원가입 방식이 여러개인 것 처럼)
      */
-    @PostMapping("/api/admins")
+    @PostMapping(value = "/api/admins", produces = "application/json; charset=UTF-8")
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "운영자 가입", notes = "필수값: 아이디, 이메일, 이름")
     public AdminCreateResDto saveAdmin(@RequestBody AdminCreateReqDto request) {
@@ -43,7 +43,7 @@ public class AdminApiController {
         return new AdminCreateResDto(no, newAdmin.getId(), newAdmin.getName(), newAdmin.getEmail());
     }
 
-    @GetMapping("/api/admins")
+    @GetMapping(value = "/api/admins", produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "운영자 목록 조회")
     public Result<List<AdminDto>> getAdmins(
             Pageable pageable) {
@@ -54,11 +54,11 @@ public class AdminApiController {
         return new Result<>(adminList.size(), adminList);
     }
 
-    @GetMapping("/api/admins/{id}")
+    @GetMapping(value = "/api/admins/{id}", produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "운영자 id 기반 조회")
     public Result<AdminDto> getAdminById(@PathVariable("id") String id) {
         Admin findAdmin = adminService.findById(id);
-        return new Result(new AdminDto(findAdmin));
+        return new Result<>(new AdminDto(findAdmin));
     }
 
     @PutMapping("/api/admins/{no}")

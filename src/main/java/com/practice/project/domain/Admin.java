@@ -23,23 +23,23 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Admin extends BaseTime {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "admin_no")
+    @Column(name = "adm_no", nullable = false, updatable = false)
     private Long no;
 
     // 운영자:상점 -> 1:N -> 연관관계 주인 => 몰
     @OneToMany(mappedBy = "admin")
     private List<Mall> mallList = new ArrayList<>();
 
-    @Column(name = "admin_id", unique = true, updatable = false, nullable = false)
+    @Column(name = "adm_id", unique = true, updatable = false, nullable = false)
     private String id;
 
-    @Column(length = 50, unique = true, updatable = false, nullable = false)
+    @Column(name = "adm_email", length = 50, unique = true, updatable = false, nullable = false)
     private String email;
 
-    @Column(name = "admin_name", updatable = false, nullable = false)
+    @Column(name = "adm_name", updatable = false, nullable = false)
     private String name;
 
-    @Column(name = "phone_number")
+    @Column(name = "adm_phone_number")
     private String phNumber;
 
     @Embedded

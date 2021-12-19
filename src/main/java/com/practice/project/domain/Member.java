@@ -1,16 +1,20 @@
 package com.practice.project.domain;
 
 import com.practice.project.domain.common.BaseTime;
+import com.practice.project.domain.common.Gender;
 import com.practice.project.domain.statusinfo.MemberStatus;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "member")
+@DynamicUpdate
 @Getter
 @Builder
 @AllArgsConstructor
@@ -18,29 +22,42 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Member extends BaseTime {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "member_no", nullable = false, updatable = false)
+    @Column(name = "mbr_no", nullable = false, updatable = false)
     private Long no;
 
     @ManyToOne
     @JoinColumn(name = "mall_no", nullable = false, updatable = false)
     private Mall mall;
 
-    @Column(name = "member_id", nullable = false, updatable = false, unique = true)
+    @Column(name = "mbr_id", unique = true, nullable = false, updatable = false)
     private String id;
 
-    @Column(name = "member_name", length = 10, nullable = false, updatable = false)
+    @Column(name = "mbr_name", length = 10, nullable = false, updatable = false)
     private String name;
 
-    @Column(length = 2)
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mbr_gender", length = 2)
+    private Gender gender;
 
-    @Column(length = 50, unique = true, updatable = false, nullable = false)
+    @Column(name = "mbr_email", length = 50, unique = true, updatable = false, nullable = false)
     private String email;
 
-    @Column(name = "birth_date")
-    private LocalDate birthDate;
+    @Column(name = "mbr_phone_number", length = 14)
+    private String phNumber;
+
+    @Column(name = "mbr_birthdate")
+    private LocalDate birthdate;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
+    @Column(name = "mbr_status", length = 10, columnDefinition = "default ACTIVE")
     private MemberStatus status;
+
+    // 수정 메소드(제한적인 setter)
+    public void changePhNumber(String phNumber) {
+        this.phNumber = Optional.ofNullable(phNumber).orElse(this.phNumber);
+    }
+
+    public void changeBirthDate(LocalDate birthdate) {
+        this.birthdate = Optional.ofNullable(birthdate).orElse(this.birthdate);
+    }
 }

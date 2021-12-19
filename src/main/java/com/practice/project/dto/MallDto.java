@@ -1,4 +1,4 @@
-package com.practice.project.dto.mall;
+package com.practice.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,6 +10,7 @@ import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
+import com.practice.project.utils.ModelMapperUtils;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @RequiredArgsConstructor
 public class MallDto {
-    private static ModelMapper modelMapper = new ModelMapper();
-
     /**
      * Create 요청 DTO
      */
@@ -46,7 +45,7 @@ public class MallDto {
         private Admin admin;
 
         public static MallCreateReqDto of(Mall mall) {
-            return modelMapper.map(mall, MallCreateReqDto.class);
+            return ModelMapperUtils.getModelMapper().map(mall, MallCreateReqDto.class);
         }
 
         public static Mall toEntity(MallCreateReqDto createRequest) {
@@ -79,7 +78,7 @@ public class MallDto {
         private Address address;
 
         public static MallResDto of(Mall mall) {
-            return modelMapper.map(mall, MallResDto.class);
+            return ModelMapperUtils.getModelMapper().map(mall, MallResDto.class);
         }
 
         public static Mall toEntity(MallResDto mallResDto) {

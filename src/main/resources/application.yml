@@ -11,12 +11,18 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
-        format_sql: false
+        format_sql: true
     show-sql: false
+    defer-datasource-initialization: true
 
+  sql:
+    init:
+      data-locations: classpath*:db/data.sql
+      schema-locations: classpath*:db/schma.sql
+      mode: always
 
   devtools:
     restart:

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "mall")
@@ -20,24 +21,24 @@ import static javax.persistence.FetchType.LAZY;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Mall extends BaseTime {
     @Id
-    @GeneratedValue
-    @Column(name = "mall_no")
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "mall_no", nullable = false, updatable = false)
     private Long no;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "admin_no", nullable = false, updatable = false)
+    @JoinColumn(name = "adm_no", nullable = false, updatable = false)
     private Admin admin;
-
-    @OneToMany(mappedBy = "mall")
-    private List<Member> memberList = new ArrayList<>();
 
     @Column(name = "mall_name", length = 50, nullable = false, unique = true)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "country_type", nullable = false, updatable = false)
+    @Column(name = "mall_country_type", length = 2, nullable = false, updatable = false)
     private Country countryType;
 
     @Embedded
     private Address address;
+
+    @OneToMany(mappedBy = "mall")
+    private List<Member> memberList = new ArrayList<>();
 }

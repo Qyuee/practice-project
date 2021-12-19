@@ -2,8 +2,8 @@ package com.practice.project.service;
 
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
-import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
-import com.practice.project.dto.mall.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallCreateReqDto;
+import com.practice.project.dto.MallDto.MallResDto;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import com.practice.project.repository.AdminRepository;

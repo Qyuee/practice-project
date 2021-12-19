@@ -2,11 +2,13 @@ package com.practice.project.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.Admin;
+import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
+import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.repository.AdminRepository;
 import com.practice.project.repository.MallRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +45,7 @@ class MallApiControllerIntegrationTest {
     @Autowired
     MallRepository mallRepository;
 
-    /*@BeforeAll
+    @BeforeAll
     @Transactional
     @Rollback(value = false)
     void 테스트_데이터_설정() {
@@ -63,7 +66,7 @@ class MallApiControllerIntegrationTest {
                 );
             }
         }
-    }*/
+    }
 
     @Test
     @DisplayName("POST /api/admin/{id}/malls")

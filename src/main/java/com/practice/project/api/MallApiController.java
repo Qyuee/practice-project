@@ -1,12 +1,8 @@
 package com.practice.project.api;
 
-import com.practice.project.domain.Admin;
-import com.practice.project.domain.Mall;
-import com.practice.project.dto.admin.AdminDto;
 import com.practice.project.dto.common.Result;
-import com.practice.project.dto.mall.MallDto;
-import com.practice.project.dto.mall.MallDto.MallCreateReqDto;
-import com.practice.project.dto.mall.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallCreateReqDto;
+import com.practice.project.dto.MallDto.MallResDto;
 import com.practice.project.service.MallService;
 import com.practice.project.validator.AllowedSortProperties;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +14,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
