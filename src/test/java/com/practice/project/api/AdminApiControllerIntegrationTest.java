@@ -51,9 +51,9 @@ class AdminApiControllerIntegrationTest {
                 .build();
 
         mockMvc.perform(post("/api/admins")
-                .content(objectMapper.writeValueAsString(reqDto))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(reqDto))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())    // 201
                 .andExpect(jsonPath("$['data'].no").exists())
@@ -71,9 +71,9 @@ class AdminApiControllerIntegrationTest {
                 .build();
 
         mockMvc.perform(post("/api/admins")
-                .content(objectMapper.writeValueAsString(reqDto))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(reqDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ApiResourceConflictException));
@@ -89,9 +89,9 @@ class AdminApiControllerIntegrationTest {
                 .build();
 
         mockMvc.perform(post("/api/admins")
-                .content(objectMapper.writeValueAsString(reqDto))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(reqDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException));
@@ -101,17 +101,17 @@ class AdminApiControllerIntegrationTest {
     @DisplayName("PUT /api/admins/{no}")
     void PUT_운영자정보_수정() throws Exception {
         AdminUpdateReqDto reqDto = AdminUpdateReqDto.builder()
-                        .address(Address.builder()
-                            .country(Country.CH)
-                            .city("베이징")
-                            .build())
-                        .phNumber("010-1111-1111")
-                        .build();
+                .address(Address.builder()
+                        .country(Country.CH)
+                        .city("베이징")
+                        .build())
+                .phNumber("010-1111-1111")
+                .build();
 
         mockMvc.perform(put("/api/admins/{no}", "1")
-                .content(objectMapper.writeValueAsString(reqDto))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(reqDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['data']['address']['country']").value(Country.CH.name()));
@@ -121,9 +121,9 @@ class AdminApiControllerIntegrationTest {
     @DisplayName("GET /api/admins, +pageable")
     void GET_운영자_리스트() throws Exception {
         mockMvc.perform(get("/api/admins")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .param("page", String.valueOf(0))
-                    .param("size", String.valueOf(2)))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .param("page", String.valueOf(0))
+                        .param("size", String.valueOf(2)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$['data']").exists())      // 'data' 요소가 존재하는지?
@@ -133,14 +133,14 @@ class AdminApiControllerIntegrationTest {
                 .andExpect(jsonPath("$['data'][0]['id']", startsWith("lee")))   // data.0.id가 "lee"로 시작하는가?
                 .andExpect(jsonPath("$['data'][%s].name", 0).value("이동석"))  // data.0.name이 '이동석'인가?
                 .andExpect(jsonPath("$..['id']").exists());     // 'id' 요소가 결과에 존재하는지?
-                //.andExpect(jsonPath("$['data'][1].id", "lee33398").exists());
+        //.andExpect(jsonPath("$['data'][1].id", "lee33398").exists());
     }
 
     @Test
     @DisplayName("GET /api/admins/{id}")
     void GET_운영자_조회_by_id() throws Exception {
         mockMvc.perform(get("/api/admins/{id}", "lee33397")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andDo(result -> {
                     String responseBody = objectMapper.writerWithDefaultPrettyPrinter()
@@ -156,8 +156,8 @@ class AdminApiControllerIntegrationTest {
     void DELETE_운영자() throws Exception {
         Long no = 1L;
         mockMvc.perform(delete("/api/admins/{no}", no)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['data']['no']").value(no));
@@ -167,8 +167,8 @@ class AdminApiControllerIntegrationTest {
     @DisplayName("DELETE /api/admins/{no} - 유효하지않은 값")
     void DELETE_운영자_유효하지않는_경우() throws Exception {
         mockMvc.perform(delete("/api/admins/{no}", "s")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentTypeMismatchException));
