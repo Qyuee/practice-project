@@ -38,37 +38,33 @@ public class AdminService {
 
     @Transactional
     public AdminResDto update(Long no, AdminUpdateReqDto reqDto) {
-        Optional<Admin> oPtOldAdmin = adminRepository.findById(no);
-
-        if (oPtOldAdmin.isEmpty()) {
+        Optional<Admin> admin = adminRepository.findById(no);
+        admin.orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
-        }
+        });
 
-        Admin oldAdmin = oPtOldAdmin.get();
+        Admin oldAdmin = admin.get();
         if (! oldAdmin.getAddress().equals(reqDto.getAddress())) {
             oldAdmin.changeAddress(reqDto.getAddress());
         }
         oldAdmin.changePhNumber(reqDto.getPhNumber());
-
         return AdminResDto.toDto(oldAdmin);
     }
 
     public Admin findOne(Long no) {
-        Optional<Admin> optionalAdmin = adminRepository.findById(no);
-        if (optionalAdmin.isEmpty()) {
+        Optional<Admin> admin = adminRepository.findById(no);
+        admin.orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
-        } else {
-            return optionalAdmin.get();
-        }
+        });
+        return admin.get();
     }
 
     public AdminResDto findById(String id) {
-        Optional<Admin> findAdmin = adminRepository.findById(id);
-        if (findAdmin.isEmpty()) {
+        Optional<Admin> admin = adminRepository.findById(id);
+        admin.orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
-        } else {
-            return AdminResDto.toDto(findAdmin.get());
-        }
+        });
+        return AdminResDto.toDto(admin.get());
     }
 
     public List<AdminResDto> findAdmins(Pageable pageable) {
@@ -77,11 +73,11 @@ public class AdminService {
 
     @Transactional
     public AdminSimpleResDto removeAdmin(Long no) {
-        Optional<Admin> oPtAdmin = adminRepository.findById(no);
-        if (oPtAdmin.isEmpty()) {
+        Optional<Admin> admin = adminRepository.findById(no);
+        admin.orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
-        }
-        return AdminSimpleResDto.toDto(oPtAdmin.get());
+        });
+        return AdminSimpleResDto.toDto(admin.get());
     }
 
     /**

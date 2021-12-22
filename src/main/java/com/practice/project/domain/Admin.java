@@ -50,12 +50,6 @@ public class Admin extends BaseTime {
     }
 
     public void changeAddress(Address address) {
-        this.address = Address.builder()
-                .country(Optional.ofNullable(address.getCountry()).orElse(this.getAddress().getCountry()))
-                .city(Optional.ofNullable(address.getCity()).orElse(this.getAddress().getCity()))
-                .street(Optional.ofNullable(address.getStreet()).orElse(this.getAddress().getStreet()))
-                .zipcode(Optional.ofNullable(address.getZipcode()).orElse(this.getAddress().getZipcode()))
-                .detailAddress(Optional.ofNullable(address.getDetailAddress()).orElse(this.getAddress().getDetailAddress()))
-                .build();
+        this.address = this.address.upsert(address, this.address);
     }
 }

@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.Optional;
 
 /**
  * 값 타입은 불변객체로 생성해서 참조공유를 막아야한다.
@@ -30,4 +31,14 @@ public class Address {
     private String street;
     private String zipcode;
     private String detailAddress;
+
+    public Address upsert(Address newAddress, Address beforeAddress) {
+        return Address.builder()
+                .country(Optional.ofNullable(newAddress.getCountry()).orElse(beforeAddress.getCountry()))
+                .city(Optional.ofNullable(newAddress.getCity()).orElse(beforeAddress.getCity()))
+                .street(Optional.ofNullable(newAddress.getStreet()).orElse(beforeAddress.getStreet()))
+                .zipcode(Optional.ofNullable(newAddress.getZipcode()).orElse(beforeAddress.getZipcode()))
+                .detailAddress(Optional.ofNullable(newAddress.getDetailAddress()).orElse(beforeAddress.getDetailAddress()))
+                .build();
+    }
 }
