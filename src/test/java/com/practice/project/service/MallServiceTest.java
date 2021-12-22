@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Country;
+import com.practice.project.dto.AdminDto;
+import com.practice.project.dto.AdminDto.AdminCreateReqDto;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
 import com.practice.project.exception.exhandler.ApiBadRequestException;
@@ -83,15 +85,15 @@ class MallServiceTest {
     @Transactional
     @Rollback(value = false)
     void 몰_save() throws Exception {
-        Admin admin = Admin.builder()
+        AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
                 .id("lee33398")
                 .name("이동석")
                 .email("lee33398@naver.com")
                 .build();
-        adminService.save(admin);
+        adminService.save(reqDto);
 
         MallCreateReqDto req = MallCreateReqDto.builder()
-                .admin(admin)
+                .admin(AdminCreateReqDto.toEntity(reqDto))
                 .mallName("테스트몰")
                 .countryType(Country.KR)
                 .build();
@@ -105,16 +107,15 @@ class MallServiceTest {
     @Transactional // @Transactional-> 테스트 케이스에서는 롤백도 함께 수행함
     //@Rollback(value = false) // -> 이 부분이 'Transaction silently rolled back because it has been marked as rollback-only' 발생
     void 몰_save_국가중복() throws Exception {
-        Admin admin = Admin.builder()
+        AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
                 .id("lee33398")
                 .name("이동석")
                 .email("lee33398@naver.com")
                 .build();
-        adminService.save(admin);
+        adminService.save(reqDto);
 
-        // 몰 1번, 운영자 동일
         MallCreateReqDto req = MallCreateReqDto.builder()
-                .admin(admin)
+                .admin(AdminCreateReqDto.toEntity(reqDto))
                 .mallName("테스트몰")
                 .countryType(Country.KR)
                 .build();
@@ -123,7 +124,7 @@ class MallServiceTest {
 
         // 몰 2번, 운영자 동일
         MallCreateReqDto req2 = MallCreateReqDto.builder()
-                .admin(admin)
+                .admin(AdminCreateReqDto.toEntity(reqDto))
                 .mallName("테스트몰2")
                 .countryType(Country.KR)
                 .build();
@@ -144,22 +145,15 @@ class MallServiceTest {
     @DisplayName("몰 정보 저장 - 동일한 몰 이름")
     @Transactional
     void 몰_save_몰_이름_중복() throws Exception {
-        Admin admin = Admin.builder()
+        AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
                 .id("lee33398")
                 .name("이동석")
                 .email("lee33398@naver.com")
                 .build();
-        adminService.save(admin);
-
-        MallCreateReqDto req = MallCreateReqDto.builder()
-                .admin(admin)
-                .mallName("테스트몰")
-                .countryType(Country.KR)
-                .build();
-        mallService.save(req);
+        adminService.save(reqDto);
 
         MallCreateReqDto req2 = MallCreateReqDto.builder()
-                .admin(admin)
+                .admin(AdminCreateReqDto.toEntity(reqDto))
                 .mallName("테스트몰")
                 .countryType(Country.EN)
                 .build();
@@ -177,15 +171,15 @@ class MallServiceTest {
     @DisplayName("몰 정보 저장 - 운영자 정보 없음")
     @Rollback(value = false)
     void 몰_save_admin_없음() {
-        Admin admin = Admin.builder()
+        AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
                 .id("lee33398")
                 .name("이동석")
                 .email("lee33398@naver.com")
                 .build();
-        adminService.save(admin);
+        adminService.save(reqDto);
 
         MallCreateReqDto req = MallCreateReqDto.builder()
-                .admin(admin)
+                .admin(AdminCreateReqDto.toEntity(reqDto))
                 .mallName("테스트몰")
                 .countryType(Country.KR)
                 .build();

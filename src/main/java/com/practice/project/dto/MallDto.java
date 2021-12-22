@@ -15,13 +15,14 @@ import lombok.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
 @RequiredArgsConstructor
 public class MallDto {
     /**
-     * Create 요청 DTO
+     * Mall Create Request Dto
      */
     @Data
     @Builder
@@ -30,16 +31,16 @@ public class MallDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MallCreateReqDto {
         // required
-        @NotNull
-        private String adminId;
-
-        @NotNull
+        @NotBlank
         private String mallName;
 
-        @NotNull
+        @NotBlank
         private Country countryType;
 
         private Address address;
+
+        @JsonIgnore
+        private String adminId;
 
         @JsonIgnore
         private Admin admin;
@@ -57,6 +58,9 @@ public class MallDto {
         }
     }
 
+    /**
+     * Mall Common Response Dto
+     */
     @Data
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)

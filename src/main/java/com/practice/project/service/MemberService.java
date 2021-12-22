@@ -59,7 +59,7 @@ public class MemberService {
     /**
      * 회원 정보 삭제
      */
-    public MemberBasicResDto delete(Long mallNo, String id) {
+    public MemberSimpleResDto delete(Long mallNo, String id) {
         //@Todo 삭제 제한 조건 검증 - 진행중인 주문이 존재하는 회원
         validateDeleteMember();
 
@@ -74,7 +74,7 @@ public class MemberService {
         }
 
         memberRepository.delete(deletedMember);
-        return MemberBasicResDto.builder().mallNo(mallNo).id(id).build();
+        return MemberSimpleResDto.builder().mallNo(mallNo).id(id).build();
     }
 
     /**

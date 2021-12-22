@@ -1,6 +1,5 @@
 package com.practice.project.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.practice.project.domain.Mall;
@@ -17,11 +16,9 @@ import static lombok.AccessLevel.PROTECTED;
 /**
  * 정적 중첩 클래스를 사용하여 외부에서 바로 접근하여 사용 할 수 있도록 작성
  */
-@Data
-@RequiredArgsConstructor
 public class MemberDto {
     /**
-     * Create Request Dto
+     * Member Create Request Dto
      */
     @Data
     @Builder
@@ -52,8 +49,7 @@ public class MemberDto {
     }
 
     /**
-     * Create Response Dto
-     * - Entity -> dto의 경우만 필요
+     * Member Create Response Dto
      */
     @Data
     @Builder
@@ -61,7 +57,6 @@ public class MemberDto {
     @NoArgsConstructor(access = PROTECTED)
     @AllArgsConstructor
     public static class MemberCreateResDto {
-        // 몰NO, 회원ID, 이름, 이메일, 휴대번호, 성별, 생년월일
         private Long mallNo;
         private String Id;
         private String name;
@@ -76,7 +71,7 @@ public class MemberDto {
     }
 
     /**
-     * Update Request Dto
+     * Member Update Request Dto
      */
     @Getter
     @Builder
@@ -88,7 +83,7 @@ public class MemberDto {
     }
 
     /**
-     * Update Response Dto
+     * Member Update Response Dto
      */
     public static class MemberUpdateResDto {
         private Long mallNo;
@@ -105,7 +100,7 @@ public class MemberDto {
     }
 
     /**
-     * 검색 결과 응답 Dto
+     * Member Search Response Dto
      */
     @Data
     @Builder
@@ -127,10 +122,10 @@ public class MemberDto {
     }
 
     /**
-     * 회원 최소정보 응답 Dto
+     * Member Simple Response Dto
      */
     @Builder
-    public static class MemberBasicResDto {
+    public static class MemberSimpleResDto {
         private Long mallNo;
         private String id;
     }

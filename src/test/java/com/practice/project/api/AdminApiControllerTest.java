@@ -2,8 +2,11 @@ package com.practice.project.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.Admin;
+import com.practice.project.dto.AdminDto;
+import com.practice.project.dto.AdminDto.AdminResDto;
 import com.practice.project.repository.AdminRepository;
 import com.practice.project.service.AdminService;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -22,16 +25,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Slf4j
 // @WebMvcTest는 @Controller, @ControllerAdvice와 같은 웹과 관련된 bean만 주입해준다.
 // @Service와 같은 @Component는 주입되지 않는다.
 @WebMvcTest(AdminApiController.class)
@@ -50,9 +55,6 @@ class AdminApiControllerTest {
     @MockBean
     private AdminService adminService;
 
-    @Autowired
-    private AdminRepository adminRepository;
-
     @BeforeAll
     void setup() {
         AdminApiController controller = new AdminApiController(adminService);
@@ -65,8 +67,8 @@ class AdminApiControllerTest {
     @Test
     @DisplayName("GET /api/admins (MockBean을 사용한 경우)")
     void GET_운영자_리스트() throws Exception {
-        List<Admin> admins = new ArrayList<>();
-        admins.add(Admin.builder()
+        List<AdminResDto> resDtoList = new ArrayList<>();
+        resDtoList.add(AdminResDto.builder()
                 .no(1L)
                 .id("lee33398")
                 .name("이동석")
@@ -74,14 +76,21 @@ class AdminApiControllerTest {
                 .build());
 
         Pageable pageable = PageRequest.of(0, 5);
+        given(adminService.findAdmins(any())).willReturn(resDtoList);
 
-        given(adminService.findAdmins(pageable)).willReturn(admins);
+        log.info("test:{}", adminService.findAdmins(pageable));
+        // any(): 어떠한 값이 들어와도 willResutn에 명시된 값이 반환됨
 
         mockMvc.perform(
                 get("/api/admins")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .param("number", "0")
+                        .param("size", "3")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding(StandardCharsets.UTF_8)
+                )
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$['data'][0].id", "lee33398").exists());
                 /*.andExpect(jsonPath("$.[?(@.id == '%s')]", "lee33398").exists());*/
     }
