@@ -41,7 +41,7 @@ class MallDtoTest {
                 .address(address)
                 .build();
 
-        MallCreateReqDto test = of(mall);
+        MallCreateReqDto test = toDto(mall);
         log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(test));
     }
 

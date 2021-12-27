@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -41,4 +42,14 @@ public class Mall extends BaseTime {
 
     @OneToMany(mappedBy = "mall")
     private List<Member> memberList = new ArrayList<>();
+
+
+    /* 수정 메소드 (setter는 제한적으로) */
+    public void changeMallName(String newMallName) {
+        this.name = Optional.ofNullable(newMallName).orElse(this.name);
+    }
+
+    public void changeAddress(Address newAddress) {
+        this.address = this.address.upsert(newAddress);
+    }
 }

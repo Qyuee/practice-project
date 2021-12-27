@@ -32,13 +32,13 @@ public class Address {
     private String zipcode;
     private String detailAddress;
 
-    public Address upsert(Address newAddress, Address beforeAddress) {
+    public Address upsert(Address newAddress) {
         return Address.builder()
-                .country(Optional.ofNullable(newAddress.getCountry()).orElse(beforeAddress.getCountry()))
-                .city(Optional.ofNullable(newAddress.getCity()).orElse(beforeAddress.getCity()))
-                .street(Optional.ofNullable(newAddress.getStreet()).orElse(beforeAddress.getStreet()))
-                .zipcode(Optional.ofNullable(newAddress.getZipcode()).orElse(beforeAddress.getZipcode()))
-                .detailAddress(Optional.ofNullable(newAddress.getDetailAddress()).orElse(beforeAddress.getDetailAddress()))
+                .country(Optional.ofNullable(newAddress.getCountry()).orElse(this.getCountry()))
+                .city(Optional.ofNullable(newAddress.getCity()).orElse(this.getCity()))
+                .street(Optional.ofNullable(newAddress.getStreet()).orElse(this.getStreet()))
+                .zipcode(Optional.ofNullable(newAddress.getZipcode()).orElse(this.getZipcode()))
+                .detailAddress(Optional.ofNullable(newAddress.getDetailAddress()).orElse(this.getDetailAddress()))
                 .build();
     }
 }

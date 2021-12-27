@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MallRepository extends JpaRepository<Mall, Long> {
@@ -14,7 +15,7 @@ public interface MallRepository extends JpaRepository<Mall, Long> {
     boolean existsByCountryType(@Param("adminNo") Long adminNo, @Param("country") Country country);*/
 
     boolean existsMallByAdminAndCountryType(Admin admin, Country country);
-    Mall findByName(String name);
+    Optional<Mall> findByName(String name);
     List<Mall> findMallByAdmin(Admin admin);
-    Mall findByNo(Long no);
+    Optional<Mall> findByNo(Long no);
 }

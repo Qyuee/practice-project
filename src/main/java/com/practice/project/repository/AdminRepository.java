@@ -13,12 +13,8 @@ import java.util.Optional;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Long> {
     Optional<Admin> findById(String id);
-    Admin findByEmail(String id);
-
     Boolean existsByIdOrEmail(String id, String email);
 
     @Query("select a from Admin a join fetch a.mallList")
     List<Admin> findAllJoinFetch();
-
-    Admin findByNo(Long no);
 }

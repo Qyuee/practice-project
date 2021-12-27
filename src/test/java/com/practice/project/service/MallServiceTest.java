@@ -3,13 +3,17 @@ package com.practice.project.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
+import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
 import com.practice.project.dto.AdminDto;
 import com.practice.project.dto.AdminDto.AdminCreateReqDto;
+import com.practice.project.dto.MallDto;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallUpdateReqDto;
 import com.practice.project.exception.exhandler.ApiBadRequestException;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
+import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import com.practice.project.repository.AdminRepository;
 import com.practice.project.repository.MallRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -47,7 +50,7 @@ class MallServiceTest {
     ObjectMapper objectMapper;
 
     //@BeforeAll
-    @Transactional
+    /*@Transactional
     void 테스트_데이터_설정() {
         Admin admin1 = Admin.builder()
                 .id("lee33398")
@@ -78,7 +81,7 @@ class MallServiceTest {
                     .build()
             );
         }
-    }
+    }*/
 
     @Test
     @DisplayName("몰 정보 저장")
@@ -137,8 +140,7 @@ class MallServiceTest {
         // ->  org.springframework.transaction.UnexpectedRollbackException
         assertEquals("There is already a mall in the country.", message);
 
-        Mall findNotExistsMall = mallRepository.findByName(req2.getMallName());
-        Assertions.assertNull(findNotExistsMall);
+        mallRepository.findByName(req2.getMallName()).ifPresent(Assertions::assertNull);
     }
 
     @Test
@@ -216,5 +218,69 @@ class MallServiceTest {
         }, "sort 검색조건 validate 실패");
         String message = exception.getMessage();
         assertEquals(sortKey+" is not supported key. please confirm your sort key.", message);
+    }
+
+    @Test
+    @DisplayName("몰 정보 수정")
+    void 몰_정보_수정() {
+        // given
+        Long mallNo = 1L;
+        MallUpdateReqDto reqDto = MallUpdateReqDto.builder()
+                .mallName("수정되는 몰 이름")
+                .address(Address.builder()
+                        .country(Country.EN)
+                        .build())
+                .build();
+
+        MallResDto exMallInfo = mallService.findByNo(mallNo);
+
+        // when
+        mallService.update(mallNo, reqDto);
+
+        // then
+        MallResDto afterMallInfo = mallService.findByNo(mallNo);
+        assertNotEquals(exMallInfo.getAddress().getCountry(), afterMallInfo.getAddress().getCountry());
+        assertEquals(reqDto.getAddress().getCountry(), afterMallInfo.getAddress().getCountry());
+
+    }
+
+    @Test
+    @DisplayName("몰 정보 수정 - 실패케이스")
+    void 몰_정보_수정_실패() {
+        // given
+        Long mallNo = 100L; // 존재하지 않는 몰no 정보
+
+        // when
+        MallUpdateReqDto reqDto = MallUpdateReqDto.builder()
+                .mallName("수정되는 몰 이름")
+                .address(Address.builder()
+                        .country(Country.EN)
+                        .build())
+                .build();
+
+        // then
+        ApiResourceNotFoundException exception = Assertions.assertThrows(ApiResourceNotFoundException.class, () -> {
+            mallService.update(mallNo, reqDto);
+        }, "몰 정보 존재하지 않기에 에러 발생");
+        String message = exception.getMessage();
+        assertEquals(message, "Mall not exist.");
+    }
+
+    @Test
+    @DisplayName("몰 삭제")
+    //@Rollback(value = false)
+    void 몰_정보_삭제() {
+        // given
+        Long mallNo = 1L;
+
+        // when
+        mallService.delete(mallNo);
+
+        // then
+        ApiResourceNotFoundException exception = Assertions.assertThrows(ApiResourceNotFoundException.class, () -> {
+            mallService.findByNo(mallNo);
+        });
+        String message = exception.getMessage();
+        assertEquals(message, "Mall not exist.");
     }
 }

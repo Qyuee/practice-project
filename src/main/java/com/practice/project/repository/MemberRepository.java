@@ -10,10 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Boolean existsMembersById(String id);
     Boolean existsMembersByEmail(String email);
-    Member findByMallAndId(Mall mall, String id);
+    Optional<Member> findByMallAndId(Mall mall, String id);
     Page<Member> findAllByMall(Mall mall, Pageable pageable);
+    Integer deleteAllByMall(Mall mall);
 }

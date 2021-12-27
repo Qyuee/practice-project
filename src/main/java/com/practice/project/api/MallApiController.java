@@ -1,8 +1,9 @@
 package com.practice.project.api;
 
-import com.practice.project.dto.common.Result;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallUpdateReqDto;
+import com.practice.project.dto.common.Result;
 import com.practice.project.service.MallService;
 import com.practice.project.validator.AllowedSortProperties;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +36,15 @@ public class MallApiController {
         return new Result<>(mallList.size(), mallList);
     }
 
+    @GetMapping(value = "/malls/{no}")
+    @ApiOperation(value = "특정 몰 정보 조회")
+    public Result<MallResDto> getMallInfo(
+            @PathVariable("no") @NotBlank Long no
+    ) {
+        MallResDto mallResDto = mallService.findByNo(no);
+        return new Result<>(mallResDto);
+    }
+
     @GetMapping(value = "/admin/{id}/malls")
     @ApiOperation(value = "운영자의 몰 리스트")
     public Result<List<MallResDto>> getAdminMalls(@PathVariable("id") @NotBlank String id) {
@@ -52,4 +62,20 @@ public class MallApiController {
         MallResDto newMall = mallService.save(reqDto);
         return new Result<>(newMall);
     }
+
+    // 몰 정보 변경
+    @PutMapping(value = "/malls/{no}")
+    @ApiOperation(value = "몰 정보 수정")
+    public Result<MallResDto> updateMallInfo(
+            @PathVariable("no") @NotBlank Long no,
+            @RequestBody MallUpdateReqDto reqDto) {
+        MallResDto updatedMall = mallService.update(no, reqDto);
+        return new Result<>(updatedMall);
+    }
+
+    // 몰 삭제
+    //@DeleteMapping(value = "/malls/{no}")
+
+    // 몰 상태 변경
+    //@PutMapping(value = "/malls/{no}/changeStatus")
 }

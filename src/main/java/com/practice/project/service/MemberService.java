@@ -29,9 +29,9 @@ public class MemberService {
     @Transactional
     public MemberCreateResDto save(MemberCreateReqDto dto) {
         // id, email에 해당하는 회원이 존재하는가?
-            // 존재하지 않으면 신규생성
-            // 존재하면 update
-            // 이렇게 service로직을 공유하면 변경되면 안되는 항목에 변경이 발생 할 수도 있을 듯. 혼란스러움
+        // 존재하지 않으면 신규생성
+        // 존재하면 update
+        // 이렇게 service로직을 공유하면 변경되면 안되는 항목에 변경이 발생 할 수도 있을 듯. 혼란스러움
         validateSaveMember(dto);
         Member member = MemberCreateReqDto.toEntity(dto);
         return MemberCreateResDto.toDto(memberRepository.save(member));
@@ -42,18 +42,19 @@ public class MemberService {
      */
     @Transactional
     public MemberUpdateResDto update(MemberUpdateReqDto dto) {
-        Mall mall = mallRepository.findByNo(dto.getMallNo());
-        if (Optional.ofNullable(mall).isEmpty()) {
+        Optional<Mall> oPtMall = mallRepository.findByNo(dto.getMallNo());
+        oPtMall.orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Mall not exist.");
-        }
+        });
 
-        Member member = memberRepository.findByMallAndId(mall, dto.getId());
-        if (Optional.ofNullable(member).isEmpty()) {
+        return memberRepository.findByMallAndId(oPtMall.get(), dto.getId()).map(member -> {
+            member.changePhNumber(dto.getPhNumber());
+            member.changeBirthDate(dto.getBirthdate());
+            return MemberUpdateResDto.toDto(member);
+
+        }).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Member not exist.");
-        }
-        member.changePhNumber(dto.getPhNumber());
-        member.changeBirthDate(dto.getBirthdate());
-        return MemberUpdateResDto.toDto(member);
+        });
     }
 
     /**
@@ -63,18 +64,15 @@ public class MemberService {
         //@Todo 삭제 제한 조건 검증 - 진행중인 주문이 존재하는 회원
         validateDeleteMember();
 
-        Mall mall = mallRepository.findByNo(mallNo);
-        if (Optional.ofNullable(mall).isEmpty()) {
+        return mallRepository.findByNo(mallNo).map(mall ->
+                memberRepository.findByMallAndId(mall, id).map(member -> {
+                    memberRepository.delete(member);
+                    return MemberSimpleResDto.builder().mallNo(mallNo).id(id).build();
+                }).orElseThrow(() -> {
+                    throw new ApiResourceNotFoundException("Member not exist.");
+                })).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Mall not exist.");
-        }
-
-        Member deletedMember = memberRepository.findByMallAndId(mall, id);
-        if (Optional.ofNullable(deletedMember).isEmpty()) {
-            throw new ApiResourceNotFoundException("Member not exist.");
-        }
-
-        memberRepository.delete(deletedMember);
-        return MemberSimpleResDto.builder().mallNo(mallNo).id(id).build();
+        });
     }
 
     /**
@@ -89,13 +87,13 @@ public class MemberService {
      * 특정 몰 회원 목록 검색 (mallNo, pageable)
      */
     public List<MemberSearchResDto> findAllByMall(Long mallNo, Pageable pageable) {
-        Mall mall = mallRepository.findByNo(mallNo);
+        Optional<Mall> oPtMall = mallRepository.findByNo(mallNo);
 
-        if (Optional.ofNullable(mall).isEmpty()) {
+        if (oPtMall.isEmpty()) {
             throw new ApiResourceNotFoundException("Mall not exist.");
         }
 
-        Page<Member> memberPage = memberRepository.findAllByMall(mall, pageable);
+        Page<Member> memberPage = memberRepository.findAllByMall(oPtMall.get(), pageable);
         return memberPage.stream().map(MemberSearchResDto::toDto).collect(Collectors.toList());
     }
 
@@ -103,13 +101,20 @@ public class MemberService {
      * 특정 몰 회원 검색
      */
     public MemberSearchResDto findByMallNoAndId(Long mallNo, String id) {
-        Mall mall = mallRepository.findByNo(mallNo);
+        return mallRepository.findByNo(mallNo).map(mall ->
+                MemberSearchResDto.toDto(memberRepository.findByMallAndId(mall, id).get())
 
-        if (Optional.ofNullable(mall).isEmpty()) {
+        ).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Mall not exist.");
-        }
+        });
+    }
 
-        return MemberSearchResDto.toDto(memberRepository.findByMallAndId(mall, id));
+    /**
+     *  특정 몰 회원 전제 삭제
+     */
+    @Transactional
+    public void deleteAll(Mall mall) {
+        memberRepository.deleteAllByMall(mall);
     }
 
 
@@ -118,21 +123,21 @@ public class MemberService {
      */
     private void validateSaveMember(MemberCreateReqDto dto) {
         // 생성하려는 몰의 존재 여부 확인
-        Mall findMall = mallRepository.findByNo(dto.getMallNo());
-        if (Optional.ofNullable(findMall).isEmpty()) {
+        Optional<Mall> oPtMall = mallRepository.findByNo(dto.getMallNo());
+        if (oPtMall.isEmpty()) {
             throw new ApiResourceNotFoundException("Mall not exist.");
 
         } else {
-            dto.setMall(findMall);
+            dto.setMall(oPtMall.get());
         }
 
         // 회원ID, Email 중복 여부 확인
         if (memberRepository.existsMembersById(dto.getId())) {
-            throw new ApiResourceConflictException("'" +dto.getId()+ "' was already used.");
+            throw new ApiResourceConflictException("'" + dto.getId() + "' was already used.");
         }
 
         if (memberRepository.existsMembersByEmail(dto.getEmail())) {
-            throw new ApiResourceConflictException("'" +dto.getEmail()+ "' was already used.");
+            throw new ApiResourceConflictException("'" + dto.getEmail() + "' was already used.");
         }
     }
 

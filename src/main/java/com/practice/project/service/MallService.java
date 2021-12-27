@@ -1,9 +1,9 @@
 package com.practice.project.service;
 
-import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallUpdateReqDto;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import com.practice.project.repository.AdminRepository;
@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.util.Optional.ofNullable;
 
 @Slf4j
 @Service
@@ -28,23 +25,25 @@ import static java.util.Optional.ofNullable;
 public class MallService {
     private final MallRepository mallRepository;
     private final AdminRepository adminRepository;
+    private final MemberService memberService;
 
-    public MallService(MallRepository mallRepository, AdminRepository adminRepository) {
+    public MallService(MallRepository mallRepository, AdminRepository adminRepository, MemberService memberService) {
         this.mallRepository = mallRepository;
         this.adminRepository = adminRepository;
+        this.memberService = memberService;
     }
 
-    // Controller -> (dto) -> Service -> (dto -> entity) -> repository
     @Transactional
     public MallResDto save(MallCreateReqDto reqDto) {
         validateSaveMall(reqDto);
         Mall saveMall = mallRepository.save(MallCreateReqDto.toEntity(reqDto));
-        return MallResDto.of(saveMall);
+        return MallResDto.toDto(saveMall);
     }
 
     public List<MallResDto> findAll(Pageable pageable) {
         Sort sort = pageable.getSort();
         Iterator<Sort.Order> iterator = sort.iterator();
+        //@Todo 확인필요
         while (iterator.hasNext()) {
             Sort.Order next = iterator.next();
             log.info("property:{}", next.getProperty());
@@ -52,32 +51,69 @@ public class MallService {
         }
         Page<Mall> mallPage = mallRepository.findAll(pageable);
         log.info("totalPage:{}", mallPage.getTotalPages());
-        return mallPage.stream().map(MallResDto::of).collect(Collectors.toList());
+        return mallPage.stream().map(MallResDto::toDto).collect(Collectors.toList());
     }
 
     public List<MallResDto> findByAdminId(String id) {
-        Optional<Admin> admin = adminRepository.findById(id);
-        if (admin.isEmpty()) {
+        return adminRepository.findById(id).map(admin ->
+                mallRepository.findMallByAdmin(admin).stream().map(MallResDto::toDto).collect(Collectors.toList())
+        ).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
-        }
+        });
+    }
 
-        return mallRepository.findMallByAdmin(admin.get()).stream().map(MallResDto::of).collect(Collectors.toList());
+    public MallResDto findByNo(Long no) {
+        return mallRepository.findByNo(no).map(MallResDto::toDto).orElseThrow(() -> {
+            throw new ApiResourceNotFoundException("Mall not exist.");
+        });
+    }
+
+    @Transactional
+    public MallResDto update(Long no, MallUpdateReqDto reqDto) {
+        return mallRepository.findByNo(no).map(mall -> {
+            mall.changeMallName(reqDto.getMallName());
+            mall.changeAddress(reqDto.getAddress());
+            return MallResDto.toDto(mall);
+        }).orElseThrow(() -> {
+            throw new ApiResourceNotFoundException("Mall not exist.");
+        });
+    }
+
+    @Transactional
+    public MallResDto delete(Long no) {
+        return mallRepository.findByNo(no).map(mall -> {
+            validateDeleteMall(mall);
+
+            mallRepository.delete(mall);
+            return MallResDto.toDto(mall);
+        }).orElseThrow(() -> {
+            throw new ApiResourceNotFoundException("Mall not exist.");
+        });
     }
 
     private void validateSaveMall(MallCreateReqDto reqDto) {
         // 운영자 ID기반 존재여부 확인
-        if (adminRepository.findById(reqDto.getAdminId()).isEmpty()) {
+        adminRepository.findById(reqDto.getAdminId()).orElseThrow(() -> {
             throw new ApiResourceConflictException("Admin not exist.");
-        }
+        });
 
         // 몰 이름 중복 여부 확인
-        if (ofNullable(mallRepository.findByName(reqDto.getMallName())).isPresent()) {
+        mallRepository.findByName(reqDto.getMallName()).ifPresent(mall -> {
             throw new ApiResourceConflictException("The name of the mall is already in use.");
-        }
+        });
 
         // 국가코드 중복 여부 확인
         if (mallRepository.existsMallByAdminAndCountryType(reqDto.getAdmin(), reqDto.getCountryType())) {
             throw new ApiResourceConflictException("There is already a mall in the country.");
         }
+    }
+
+    // 몰 삭제 사전검사
+    private void validateDeleteMall(Mall mall) {
+        // 몰에 가입된 모든 회원 삭제 처리
+        memberService.deleteAll(mall);
+
+        // 회원의 진행중인 주문이 존재하지 않을 경우
+        log.info("몰 삭제 사전 조건 검사...");
     }
 }

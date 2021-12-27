@@ -2,9 +2,7 @@ package com.practice.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
@@ -12,8 +10,6 @@ import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
 import com.practice.project.utils.ModelMapperUtils;
 import lombok.*;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -30,7 +26,6 @@ public class MallDto {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MallCreateReqDto {
-        // required
         @NotBlank
         private String mallName;
 
@@ -45,15 +40,40 @@ public class MallDto {
         @JsonIgnore
         private Admin admin;
 
-        public static MallCreateReqDto of(Mall mall) {
+        public static MallCreateReqDto toDto(Mall mall) {
             return ModelMapperUtils.getModelMapper().map(mall, MallCreateReqDto.class);
         }
 
-        public static Mall toEntity(MallCreateReqDto createRequest) {
+        public static Mall toEntity(MallCreateReqDto dto) {
             return Mall.builder()
-                    .name(createRequest.getMallName())
-                    .admin(createRequest.getAdmin())
-                    .countryType(createRequest.getCountryType())
+                    .name(dto.getMallName())
+                    .admin(dto.getAdmin())
+                    .countryType(dto.getCountryType())
+                    .build();
+        }
+    }
+
+    @Data
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class MallUpdateReqDto {
+        @NotBlank
+        private Long mallNo;
+
+        @NotBlank
+        private String mallName;
+        private Address address;
+
+        @JsonIgnore
+        private Admin admin;
+
+        // Dto -> entity : toEntity
+        public static Mall toEntity(MallUpdateReqDto dto) {
+            return Mall.builder()
+                    .no(dto.getMallNo())
+                    .admin(dto.getAdmin())
+                    .name(dto.getMallName())
+                    .address(dto.getAddress())
                     .build();
         }
     }
@@ -62,36 +82,17 @@ public class MallDto {
      * Mall Common Response Dto
      */
     @Data
-    @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MallResDto {
-        @NotNull
         private Long mallNo;
-
         private Long adminNo;
-
-        @NotNull
         private String mallName;
-
-        @NotNull
         private Country countryType;
-
         private Address address;
 
-        public static MallResDto of(Mall mall) {
+        public static MallResDto toDto(Mall mall) {
             return ModelMapperUtils.getModelMapper().map(mall, MallResDto.class);
-        }
-
-        public static Mall toEntity(MallResDto mallResDto) {
-            return Mall.builder()
-                    .no(mallResDto.getMallNo())
-                    .name(mallResDto.getMallName())
-                    .countryType(mallResDto.getCountryType())
-                    .address(mallResDto.getAddress())
-                    .build();
         }
     }
 }

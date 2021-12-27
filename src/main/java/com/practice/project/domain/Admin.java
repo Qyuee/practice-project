@@ -50,6 +50,6 @@ public class Admin extends BaseTime {
     }
 
     public void changeAddress(Address address) {
-        this.address = this.address.upsert(address, this.address);
+        this.address = this.address.upsert(address);
     }
 }

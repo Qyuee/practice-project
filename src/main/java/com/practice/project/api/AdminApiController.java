@@ -1,7 +1,5 @@
 package com.practice.project.api;
 
-import com.practice.project.domain.Admin;
-import com.practice.project.dto.AdminDto;
 import com.practice.project.dto.AdminDto.AdminCreateReqDto;
 import com.practice.project.dto.AdminDto.AdminResDto;
 import com.practice.project.dto.AdminDto.AdminSimpleResDto;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 

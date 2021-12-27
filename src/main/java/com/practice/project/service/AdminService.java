@@ -38,17 +38,17 @@ public class AdminService {
 
     @Transactional
     public AdminResDto update(Long no, AdminUpdateReqDto reqDto) {
-        Optional<Admin> admin = adminRepository.findById(no);
-        admin.orElseThrow(() -> {
+        Optional<Admin> optAdmin = adminRepository.findById(no);
+        optAdmin.orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
         });
 
-        Admin oldAdmin = admin.get();
-        if (! oldAdmin.getAddress().equals(reqDto.getAddress())) {
-            oldAdmin.changeAddress(reqDto.getAddress());
+        Admin admin = optAdmin.get();
+        if (! admin.getAddress().equals(reqDto.getAddress())) {
+            admin.changeAddress(reqDto.getAddress());
         }
-        oldAdmin.changePhNumber(reqDto.getPhNumber());
-        return AdminResDto.toDto(oldAdmin);
+        admin.changePhNumber(reqDto.getPhNumber());
+        return AdminResDto.toDto(admin);
     }
 
     public Admin findOne(Long no) {
