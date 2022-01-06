@@ -56,20 +56,28 @@ public class MallService {
 
     public List<MallResDto> findByAdminId(String id) {
         return adminRepository.findById(id).map(admin ->
-                mallRepository.findMallByAdmin(admin).stream().map(MallResDto::toDto).collect(Collectors.toList())
+                mallRepository.findByAdmin(admin).stream().map(MallResDto::toDto).collect(Collectors.toList())
         ).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
         });
     }
 
-    public MallResDto findByNo(Long no) {
-        return mallRepository.findByNo(no).map(MallResDto::toDto).orElseThrow(() -> {
-            throw new ApiResourceNotFoundException("Mall not exist.");
+    public MallResDto findByNo(String adminId, Long no) {
+        return adminRepository.findById(adminId).map(admin -> {
+            return mallRepository.findByAdminAndNo(admin, no).map(MallResDto::toDto).orElseThrow(() -> {
+                throw new ApiResourceNotFoundException("Mall not exist.");
+            });
+        }).orElseThrow(() -> {
+            throw new ApiResourceNotFoundException("Admin not exist.");
         });
     }
 
     @Transactional
     public MallResDto update(Long no, MallUpdateReqDto reqDto) {
+        adminRepository.findById(reqDto.getAdminId()).orElseThrow(() -> {
+            throw new ApiResourceNotFoundException("Admin not exist.");
+        });
+
         return mallRepository.findByNo(no).map(mall -> {
             mall.changeMallName(reqDto.getMallName());
             mall.changeAddress(reqDto.getAddress());
@@ -80,10 +88,13 @@ public class MallService {
     }
 
     @Transactional
-    public MallResDto delete(Long no) {
+    public MallResDto delete(String adminId, Long no) {
+        adminRepository.findById(adminId).orElseThrow(() -> {
+            throw new ApiResourceNotFoundException("Admin not exist.");
+        });
+
         return mallRepository.findByNo(no).map(mall -> {
             validateDeleteMall(mall);
-
             mallRepository.delete(mall);
             return MallResDto.toDto(mall);
         }).orElseThrow(() -> {
@@ -93,7 +104,9 @@ public class MallService {
 
     private void validateSaveMall(MallCreateReqDto reqDto) {
         // 운영자 ID기반 존재여부 확인
-        adminRepository.findById(reqDto.getAdminId()).orElseThrow(() -> {
+        adminRepository.findById(reqDto.getAdminId()).ifPresentOrElse(admin -> {
+            reqDto.setAdmin(admin);
+        }, () -> {
             throw new ApiResourceConflictException("Admin not exist.");
         });
 
@@ -110,10 +123,10 @@ public class MallService {
 
     // 몰 삭제 사전검사
     private void validateDeleteMall(Mall mall) {
+        // 몰에 연관된 주문건이 존재하는지 확인
+        // 진행중인 주문이 있다면 삭제 불가
+
         // 몰에 가입된 모든 회원 삭제 처리
         memberService.deleteAll(mall);
-
-        // 회원의 진행중인 주문이 존재하지 않을 경우
-        log.info("몰 삭제 사전 조건 검사...");
     }
 }

@@ -14,8 +14,6 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
-@RequiredArgsConstructor
 public class MallDto {
     /**
      * Mall Create Request Dto
@@ -66,6 +64,9 @@ public class MallDto {
 
         @JsonIgnore
         private Admin admin;
+
+        @JsonIgnore
+        private String adminId;
 
         // Dto -> entity : toEntity
         public static Mall toEntity(MallUpdateReqDto dto) {

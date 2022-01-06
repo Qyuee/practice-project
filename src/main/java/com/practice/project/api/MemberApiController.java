@@ -14,5 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberApiController {
     private final MemberService memberService;
 
-    //
+    // 회원 생성
+
+    // 쇼핑몰 회원 리스트 조회
+
+    // 쇼핑몰 회원 정보 조회
+
+    // 쇼핑몰
 }

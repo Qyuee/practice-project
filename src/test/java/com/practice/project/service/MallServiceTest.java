@@ -1,21 +1,15 @@
 package com.practice.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.practice.project.domain.Admin;
-import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.AdminDto;
 import com.practice.project.dto.AdminDto.AdminCreateReqDto;
-import com.practice.project.dto.MallDto;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
 import com.practice.project.dto.MallDto.MallUpdateReqDto;
 import com.practice.project.exception.exhandler.ApiBadRequestException;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
-import com.practice.project.repository.AdminRepository;
-import com.practice.project.repository.MallRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 class MallServiceTest {
     @Autowired
     MallService mallService;
 
     @Autowired
-    MallRepository mallRepository;
-
-    @Autowired
     AdminService adminService;
-
-    @Autowired
-    AdminRepository adminRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -86,17 +75,17 @@ class MallServiceTest {
     @Test
     @DisplayName("몰 정보 저장")
     @Transactional
-    @Rollback(value = false)
+    //@Rollback(value = false)
     void 몰_save() throws Exception {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("lee33398")
+                .id("test001")
                 .name("이동석")
-                .email("lee33398@naver.com")
+                .email("test001@naver.com")
                 .build();
         adminService.save(reqDto);
 
         MallCreateReqDto req = MallCreateReqDto.builder()
-                .admin(AdminCreateReqDto.toEntity(reqDto))
+                .adminId(reqDto.getId())
                 .mallName("테스트몰")
                 .countryType(Country.KR)
                 .build();
@@ -111,23 +100,22 @@ class MallServiceTest {
     //@Rollback(value = false) // -> 이 부분이 'Transaction silently rolled back because it has been marked as rollback-only' 발생
     void 몰_save_국가중복() throws Exception {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("lee33398")
+                .id("test001")
                 .name("이동석")
-                .email("lee33398@naver.com")
+                .email("test001@naver.com")
                 .build();
         adminService.save(reqDto);
 
         MallCreateReqDto req = MallCreateReqDto.builder()
-                .admin(AdminCreateReqDto.toEntity(reqDto))
+                .adminId(reqDto.getId())
                 .mallName("테스트몰")
                 .countryType(Country.KR)
                 .build();
-
         mallService.save(req);
 
         // 몰 2번, 운영자 동일
         MallCreateReqDto req2 = MallCreateReqDto.builder()
-                .admin(AdminCreateReqDto.toEntity(reqDto))
+                .adminId(reqDto.getId())
                 .mallName("테스트몰2")
                 .countryType(Country.KR)
                 .build();
@@ -139,8 +127,6 @@ class MallServiceTest {
         String message = exception.getMessage();
         // ->  org.springframework.transaction.UnexpectedRollbackException
         assertEquals("There is already a mall in the country.", message);
-
-        mallRepository.findByName(req2.getMallName()).ifPresent(Assertions::assertNull);
     }
 
     @Test
@@ -148,16 +134,23 @@ class MallServiceTest {
     @Transactional
     void 몰_save_몰_이름_중복() throws Exception {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("lee33398")
+                .id("test001")
                 .name("이동석")
-                .email("lee33398@naver.com")
+                .email("test001@naver.com")
                 .build();
         adminService.save(reqDto);
 
-        MallCreateReqDto req2 = MallCreateReqDto.builder()
-                .admin(AdminCreateReqDto.toEntity(reqDto))
+        MallCreateReqDto req1 = MallCreateReqDto.builder()
+                .adminId(reqDto.getId())
                 .mallName("테스트몰")
                 .countryType(Country.EN)
+                .build();
+        mallService.save(req1);
+
+        MallCreateReqDto req2 = MallCreateReqDto.builder()
+                .adminId(reqDto.getId())
+                .mallName("테스트몰")
+                .countryType(Country.KR)
                 .build();
 
         ApiResourceConflictException exception = assertThrows(ApiResourceConflictException.class, () -> {
@@ -191,6 +184,7 @@ class MallServiceTest {
 
     @Test
     @DisplayName("몰 정보 리스트")
+    @Order(6)
     void 몰_list() {
         int page = 0;
         int size = 5;
@@ -202,11 +196,12 @@ class MallServiceTest {
             log.info(mallResDto.toString());
         }
 
-        assertEquals(mallList.size(), 5);
+        assertEquals(1, mallList.size());
     }
 
     @Test
     @DisplayName("유효하지 않는 sortKey")
+    @Order(7)
     void 몰_list_유효하지않는_sort_key() {
         int page = 0;
         int size = 5;
@@ -222,8 +217,10 @@ class MallServiceTest {
 
     @Test
     @DisplayName("몰 정보 수정")
+    @Order(8)
     void 몰_정보_수정() {
         // given
+        String adminId = "lee33397";
         Long mallNo = 1L;
         MallUpdateReqDto reqDto = MallUpdateReqDto.builder()
                 .mallName("수정되는 몰 이름")
@@ -232,13 +229,13 @@ class MallServiceTest {
                         .build())
                 .build();
 
-        MallResDto exMallInfo = mallService.findByNo(mallNo);
+        MallResDto exMallInfo = mallService.findByNo(adminId, mallNo);
 
         // when
         mallService.update(mallNo, reqDto);
 
         // then
-        MallResDto afterMallInfo = mallService.findByNo(mallNo);
+        MallResDto afterMallInfo = mallService.findByNo(adminId, mallNo);
         assertNotEquals(exMallInfo.getAddress().getCountry(), afterMallInfo.getAddress().getCountry());
         assertEquals(reqDto.getAddress().getCountry(), afterMallInfo.getAddress().getCountry());
 
@@ -246,6 +243,7 @@ class MallServiceTest {
 
     @Test
     @DisplayName("몰 정보 수정 - 실패케이스")
+    @Order(9)
     void 몰_정보_수정_실패() {
         // given
         Long mallNo = 100L; // 존재하지 않는 몰no 정보
@@ -268,17 +266,19 @@ class MallServiceTest {
 
     @Test
     @DisplayName("몰 삭제")
+    @Order(9)
     //@Rollback(value = false)
     void 몰_정보_삭제() {
         // given
+        String adminId = "lee33397";
         Long mallNo = 1L;
 
         // when
-        mallService.delete(mallNo);
+        mallService.delete(adminId, mallNo);
 
         // then
         ApiResourceNotFoundException exception = Assertions.assertThrows(ApiResourceNotFoundException.class, () -> {
-            mallService.findByNo(mallNo);
+            mallService.findByNo(adminId, mallNo);
         });
         String message = exception.getMessage();
         assertEquals(message, "Mall not exist.");

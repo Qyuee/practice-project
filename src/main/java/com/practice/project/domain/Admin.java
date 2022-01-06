@@ -2,6 +2,7 @@ package com.practice.project.domain;
 
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.BaseTime;
+import com.practice.project.domain.statusinfo.MallStatus;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -17,33 +18,34 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "admin")
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @DynamicUpdate
 public class Admin extends BaseTime {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "adm_no", nullable = false, updatable = false)
+    @Column(name = "admin_no", nullable = false, updatable = false)
     private Long no;
 
-    // 운영자:상점 -> 1:N -> 연관관계 주인 => 몰
-    @OneToMany(mappedBy = "admin")
-    private List<Mall> mallList = new ArrayList<>();
-
-    @Column(name = "adm_id", unique = true, updatable = false, nullable = false)
+    @Column(name = "id", unique = true, updatable = false, nullable = false)
     private String id;
 
-    @Column(name = "adm_email", length = 50, unique = true, updatable = false, nullable = false)
+    @Column(name = "email", length = 50, unique = true, updatable = false, nullable = false)
     private String email;
 
-    @Column(name = "adm_name", updatable = false, nullable = false)
+    @Column(name = "name", updatable = false, nullable = false)
     private String name;
 
-    @Column(name = "adm_phone_number")
+    @Column(name = "phone_number")
     private String phNumber;
 
     @Embedded
     private Address address;
+
+    // 운영자:상점 -> 1:N -> 연관관계 주인 => 몰
+    @OneToMany(mappedBy = "admin")
+    private List<Mall> mallList = new ArrayList<>();
 
     public void changePhNumber(String phNumber) {
         this.phNumber = phNumber;

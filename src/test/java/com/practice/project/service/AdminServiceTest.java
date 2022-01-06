@@ -37,9 +37,6 @@ class AdminServiceTest {
     AdminService adminService;
 
     @Autowired
-    AdminRepository adminRepository;
-
-    @Autowired
     ObjectMapper objectMapper;
 
     @Test

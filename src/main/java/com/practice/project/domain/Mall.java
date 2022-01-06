@@ -3,6 +3,7 @@ package com.practice.project.domain;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.BaseTime;
 import com.practice.project.domain.common.Country;
+import com.practice.project.domain.statusinfo.MallStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "mall")
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Mall extends BaseTime {
@@ -27,18 +29,22 @@ public class Mall extends BaseTime {
     private Long no;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "adm_no", nullable = false, updatable = false)
+    @JoinColumn(name = "admin_no", nullable = false, updatable = false)
     private Admin admin;
 
-    @Column(name = "mall_name", length = 50, nullable = false, unique = true)
+    @Column(name = "name", length = 50, nullable = false, unique = true)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "mall_country_type", length = 2, nullable = false, updatable = false)
+    @Column(name = "country_type", length = 2, nullable = false, updatable = false)
     private Country countryType;
 
     @Embedded
     private Address address;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 10, columnDefinition = "default NORMAL")
+    private MallStatus mallStatus;
 
     @OneToMany(mappedBy = "mall")
     private List<Member> memberList = new ArrayList<>();

@@ -36,12 +36,12 @@ public class MallApiController {
         return new Result<>(mallList.size(), mallList);
     }
 
-    @GetMapping(value = "/malls/{no}")
+    @GetMapping(value = "/admin/{id}/malls/{no}")
     @ApiOperation(value = "특정 몰 정보 조회")
     public Result<MallResDto> getMallInfo(
-            @PathVariable("no") @NotBlank Long no
-    ) {
-        MallResDto mallResDto = mallService.findByNo(no);
+            @PathVariable("id") @NotBlank String id,
+            @PathVariable("no") @NotBlank Long no) {
+        MallResDto mallResDto = mallService.findByNo(id, no);
         return new Result<>(mallResDto);
     }
 
@@ -57,25 +57,38 @@ public class MallApiController {
     public Result<MallResDto> createMall(
             @PathVariable("id") @NotBlank String id,
             @RequestBody MallCreateReqDto reqDto) {
-
         reqDto.setAdminId(id);
         MallResDto newMall = mallService.save(reqDto);
         return new Result<>(newMall);
     }
 
     // 몰 정보 변경
-    @PutMapping(value = "/malls/{no}")
+    @PutMapping(value = "/admin/{id}/malls/{no}")
     @ApiOperation(value = "몰 정보 수정")
     public Result<MallResDto> updateMallInfo(
+            @PathVariable("id") @NotBlank String id,
             @PathVariable("no") @NotBlank Long no,
             @RequestBody MallUpdateReqDto reqDto) {
+        reqDto.setAdminId(id);
         MallResDto updatedMall = mallService.update(no, reqDto);
         return new Result<>(updatedMall);
     }
 
     // 몰 삭제
-    //@DeleteMapping(value = "/malls/{no}")
+    @DeleteMapping(value = "/admin/{id}/malls/{no}")
+    public Result<MallResDto> deleteMallInfo(
+            @PathVariable("id") @NotBlank String id,
+            @PathVariable("no") @NotBlank Long no) {
+        MallResDto deletedMall = mallService.delete(id, no);
+        return new Result<>(deletedMall);
+    }
 
     // 몰 상태 변경
-    //@PutMapping(value = "/malls/{no}/changeStatus")
+    /*@PutMapping(value = "/admin/{id}/malls/{no}/changeStatus")
+    public Result<MallResDto> changeMallStatus(
+            @PathVariable("id") @NotBlank String id,
+            @PathVariable("no") @NotBlank Long no) {
+
+        return new Result<>();
+    }*/
 }
