@@ -1,8 +1,11 @@
 package com.practice.project.service;
 
 import com.practice.project.domain.Mall;
+import com.practice.project.domain.statusinfo.MallStatus;
+import com.practice.project.dto.MallDto;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallStatusResDto;
 import com.practice.project.dto.MallDto.MallUpdateReqDto;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
@@ -82,6 +85,20 @@ public class MallService {
             mall.changeMallName(reqDto.getMallName());
             mall.changeAddress(reqDto.getAddress());
             return MallResDto.toDto(mall);
+        }).orElseThrow(() -> {
+            throw new ApiResourceNotFoundException("Mall not exist.");
+        });
+    }
+
+    @Transactional
+    public MallStatusResDto updateStatus(String adminId, Long mallNo, MallStatus status) {
+        adminRepository.findById(adminId).orElseThrow(() -> {
+            throw new ApiResourceNotFoundException("Admin not exist.");
+        });
+
+        return mallRepository.findByNo(mallNo).map(mall -> {
+            mall.changeStatus(status);
+            return MallStatusResDto.toDto(mall);
         }).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Mall not exist.");
         });

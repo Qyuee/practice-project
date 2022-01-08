@@ -8,6 +8,7 @@ import com.practice.project.domain.Admin;
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
+import com.practice.project.domain.statusinfo.MallStatus;
 import com.practice.project.utils.ModelMapperUtils;
 import lombok.*;
 
@@ -79,6 +80,17 @@ public class MallDto {
         }
     }
 
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class MallStatusResDto {
+        private Long mallNo;
+        private MallStatus status;
+
+        public static MallStatusResDto toDto(Mall mall) {
+            return ModelMapperUtils.getModelMapper().map(mall, MallStatusResDto.class);
+        }
+    }
+
     /**
      * Mall Common Response Dto
      */
@@ -90,6 +102,7 @@ public class MallDto {
         private Long adminNo;
         private String mallName;
         private Country countryType;
+        private MallStatus status;
         private Address address;
 
         public static MallResDto toDto(Mall mall) {

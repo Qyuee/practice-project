@@ -18,7 +18,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "admin")
 @Getter
 @Builder
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @DynamicUpdate

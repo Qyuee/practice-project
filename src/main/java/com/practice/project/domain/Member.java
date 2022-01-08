@@ -14,11 +14,11 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "member")
-@DynamicUpdate
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 public class Member extends BaseTime {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -28,6 +28,10 @@ public class Member extends BaseTime {
     @ManyToOne
     @JoinColumn(name = "mall_no", nullable = false, updatable = false)
     private Mall mall;
+
+    @ManyToOne
+    @JoinColumn(name = "member_address_no")
+    private MemberAddress memberAddress;
 
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     private String id;
@@ -49,7 +53,7 @@ public class Member extends BaseTime {
     private LocalDate birthdate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 10, columnDefinition = "default ACTIVE")
+    @Column(name = "status", length = 10, columnDefinition = "varchar(10) default 'ACTIVE'")
     private MemberStatus status;
 
     // 수정 메소드(제한적인 setter)

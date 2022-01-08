@@ -101,10 +101,11 @@ public class MemberService {
      * 특정 몰 회원 검색
      */
     public MemberSearchResDto findByMallNoAndId(Long mallNo, String id) {
-        return mallRepository.findByNo(mallNo).map(mall ->
-                MemberSearchResDto.toDto(memberRepository.findByMallAndId(mall, id).get())
-
-        ).orElseThrow(() -> {
+        return mallRepository.findByNo(mallNo).map(mall -> {
+            return memberRepository.findByMallAndId(mall, id).map(MemberSearchResDto::toDto).orElseThrow(() -> {
+                throw new ApiResourceNotFoundException("Member not exist.");
+            });
+        }).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Mall not exist.");
         });
     }
@@ -123,13 +124,9 @@ public class MemberService {
      */
     private void validateSaveMember(MemberCreateReqDto dto) {
         // 생성하려는 몰의 존재 여부 확인
-        Optional<Mall> oPtMall = mallRepository.findByNo(dto.getMallNo());
-        if (oPtMall.isEmpty()) {
+        mallRepository.findByNo(dto.getMallNo()).ifPresentOrElse(dto::setMall, () -> {
             throw new ApiResourceNotFoundException("Mall not exist.");
-
-        } else {
-            dto.setMall(oPtMall.get());
-        }
+        });
 
         // 회원ID, Email 중복 여부 확인
         if (memberRepository.existsMembersById(dto.getId())) {

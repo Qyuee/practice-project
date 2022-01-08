@@ -1,11 +1,15 @@
 package com.practice.project.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
+import com.practice.project.domain.statusinfo.MallStatus;
 import com.practice.project.dto.AdminDto.AdminCreateReqDto;
+import com.practice.project.dto.MallDto;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallStatusResDto;
 import com.practice.project.dto.MallDto.MallUpdateReqDto;
 import com.practice.project.exception.exhandler.ApiBadRequestException;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
@@ -18,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -28,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
+@ActiveProfiles("mysql")
 class MallServiceTest {
     @Autowired
     MallService mallService;
@@ -265,9 +271,23 @@ class MallServiceTest {
     }
 
     @Test
+    @DisplayName("몰 상태 변경")
+    @Order(10)
+    @Rollback(value = false)
+    void 몰_상태_변경() throws JsonProcessingException {
+        String adminId = "lee33397";
+        Long mallNo = 1L;
+        MallStatus status = MallStatus.DORMANT;
+        MallStatusResDto mallStatusResDto = mallService.updateStatus(adminId, mallNo, status);
+
+        MallResDto afterMallInfo = mallService.findByNo(adminId, mallNo);
+        assertEquals(afterMallInfo.getStatus(), status);
+        log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mallStatusResDto));
+    }
+
+    @Test
     @DisplayName("몰 삭제")
-    @Order(9)
-    //@Rollback(value = false)
+    @Order(1000)
     void 몰_정보_삭제() {
         // given
         String adminId = "lee33397";

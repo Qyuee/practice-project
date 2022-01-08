@@ -19,7 +19,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "mall")
 @Getter
 @Builder
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Mall extends BaseTime {
@@ -43,7 +42,7 @@ public class Mall extends BaseTime {
     private Address address;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 10, columnDefinition = "default NORMAL")
+    @Column(name = "status", length = 10, columnDefinition = "varchar(10) default 'NORMAL'")
     private MallStatus mallStatus;
 
     @OneToMany(mappedBy = "mall")
@@ -54,8 +53,10 @@ public class Mall extends BaseTime {
     public void changeMallName(String newMallName) {
         this.name = Optional.ofNullable(newMallName).orElse(this.name);
     }
-
     public void changeAddress(Address newAddress) {
         this.address = this.address.upsert(newAddress);
+    }
+    public void changeStatus(MallStatus newStatus) {
+        this.mallStatus = Optional.ofNullable(newStatus).orElse(this.mallStatus);
     }
 }

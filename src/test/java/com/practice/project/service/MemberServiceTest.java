@@ -3,11 +3,12 @@ package com.practice.project.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.common.Gender;
-import com.practice.project.dto.MemberDto;
-import com.practice.project.dto.MemberDto.*;
+import com.practice.project.dto.MemberDto.MemberCreateReqDto;
+import com.practice.project.dto.MemberDto.MemberCreateResDto;
+import com.practice.project.dto.MemberDto.MemberSearchResDto;
+import com.practice.project.dto.MemberDto.MemberUpdateReqDto;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
-import com.practice.project.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -27,12 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Slf4j
 @Transactional
 @SpringBootTest
+@ActiveProfiles("mysql")
 class MemberServiceTest {
     @Autowired
     MemberService memberService;
-
-    @Autowired
-    MemberRepository memberRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -69,7 +69,6 @@ class MemberServiceTest {
                 .birthdate(LocalDate.of(1990, 1, 1))
                 .build();
         MemberCreateResDto saveMember = memberService.save(dto);
-
         MemberSearchResDto searchMember = memberService.findByMallNoAndId(saveMember.getMallNo(), saveMember.getId());
         log.info("{}", searchMember);
     }
@@ -93,7 +92,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원 생성 서비스 실패 로직 검증")
-    void 회원_생성_실패() throws JsonProcessingException {
+    void 회원_생성_실패() {
         MemberCreateReqDto dto = MemberCreateReqDto.builder()
                 .id("testCustom001")
                 .name("회원001")
@@ -102,7 +101,6 @@ class MemberServiceTest {
                 .gender(Gender.F)
                 .birthdate(LocalDate.of(1992, 12, 29))
                 .build();
-
         memberService.save(dto);
 
         MemberCreateReqDto dto2 = MemberCreateReqDto.builder()
@@ -139,7 +137,6 @@ class MemberServiceTest {
 
         memberService.update(updateDto);
         MemberSearchResDto updatedMall = memberService.findByMallNoAndId(mallNo, memberId);
-
         log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(updatedMall));
     }
 

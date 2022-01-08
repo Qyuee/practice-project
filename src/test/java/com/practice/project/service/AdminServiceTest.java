@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.project.domain.Admin;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
-import com.practice.project.dto.AdminDto;
 import com.practice.project.dto.AdminDto.AdminCreateReqDto;
 import com.practice.project.dto.AdminDto.AdminResDto;
 import com.practice.project.dto.AdminDto.AdminSimpleResDto;
@@ -13,24 +12,25 @@ import com.practice.project.dto.AdminDto.AdminUpdateReqDto;
 import com.practice.project.dto.common.Result;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
-import com.practice.project.repository.AdminRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
+@ActiveProfiles("mysql")
 @Transactional
 class AdminServiceTest {
     @Autowired

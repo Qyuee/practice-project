@@ -1,7 +1,10 @@
 package com.practice.project.api;
 
+import com.practice.project.domain.statusinfo.MallStatus;
+import com.practice.project.dto.MallDto;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
+import com.practice.project.dto.MallDto.MallStatusResDto;
 import com.practice.project.dto.MallDto.MallUpdateReqDto;
 import com.practice.project.dto.common.Result;
 import com.practice.project.service.MallService;
@@ -84,11 +87,12 @@ public class MallApiController {
     }
 
     // 몰 상태 변경
-    /*@PutMapping(value = "/admin/{id}/malls/{no}/changeStatus")
-    public Result<MallResDto> changeMallStatus(
+    @PutMapping(value = "/admin/{id}/malls/{no}/changeStatus")
+    public Result<MallStatusResDto> changeMallStatus(
             @PathVariable("id") @NotBlank String id,
-            @PathVariable("no") @NotBlank Long no) {
-
-        return new Result<>();
-    }*/
+            @PathVariable("no") @NotBlank Long no,
+            @RequestBody @NotBlank MallStatus status) {
+        MallStatusResDto updatedMall = mallService.updateStatus(id, no, status);
+        return new Result<>(updatedMall);
+    }
 }
