@@ -48,27 +48,27 @@ public class AdminApiController {
         return new Result<>(resDtoList.size(), resDtoList);
     }
 
-    @GetMapping(value = "/admins/{id}")
+    @GetMapping(value = "/admins/{admin_id}")
     @ApiOperation(value = "운영자 id 기반 조회")
-    public Result<AdminResDto> getAdminById(@PathVariable("id") @NotBlank String id) {
-        AdminResDto resDto = adminService.findById(id);
+    public Result<AdminResDto> getAdminById(@PathVariable("admin_id") @NotBlank String adminId) {
+        AdminResDto resDto = adminService.findByAdminId(adminId);
         return new Result<>(resDto);
     }
 
-    @PutMapping(value = "/admins/{no}")
+    @PutMapping(value = "/admins/{admin_id}")
     //@Todo 타입이 맞지않는 경우 발생하는 예외응답 처리 필요
     @ApiOperation(value = "운영자 정보 일부 수정", notes = "필수값: 운영자 고유번호")
     public Result<AdminResDto> updateAdmin(
-            @PathVariable("no") @NotNull Long no,
+            @PathVariable("admin_id") @NotNull String adminId,
             @RequestBody AdminUpdateReqDto reqDto) {
-        AdminResDto resDto = adminService.update(no, reqDto);
+        AdminResDto resDto = adminService.update(adminId, reqDto);
         return new Result<>(resDto);
     }
 
-    @DeleteMapping("/admins/{no}")
+    @DeleteMapping("/admins/{admin_id}")
     @ApiOperation(value = "운영자 삭제")
-    public Result<AdminSimpleResDto> deleteAdmin(@PathVariable("no") @NotNull Long no) {
-        AdminSimpleResDto resDto = adminService.removeAdmin(no);
+    public Result<AdminSimpleResDto> deleteAdmin(@PathVariable("admin_id") @NotNull String adminId) {
+        AdminSimpleResDto resDto = adminService.removeByAdminId(adminId);
         return new Result<>(resDto);
     }
 }

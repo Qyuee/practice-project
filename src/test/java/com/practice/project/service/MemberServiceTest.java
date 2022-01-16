@@ -61,23 +61,24 @@ class MemberServiceTest {
     @DisplayName("특정 몰 회원 정보 조회")
     void 특정몰_회원_정보_조회() {
         MemberCreateReqDto dto = MemberCreateReqDto.builder()
-                .id("custom100")
+                .memberId("custom100")
                 .name("회원100")
                 .email("custom100@naver.com")
                 .mallNo(1L)
                 .gender(Gender.F)
                 .birthdate(LocalDate.of(1990, 1, 1))
                 .build();
-        MemberCreateResDto saveMember = memberService.save(dto);
-        MemberSearchResDto searchMember = memberService.findByMallNoAndId(saveMember.getMallNo(), saveMember.getId());
-        log.info("{}", searchMember);
+        memberService.save(dto);
+
+        MemberSearchResDto searchMember = memberService.findByMallNoAndMemberId(dto.getMallNo(), dto.getMemberId());
+        Assertions.assertEquals(dto.getMemberId(), searchMember.getMemberId());
     }
 
     @Test
     @DisplayName("회원 생성 서비스 로직 검증")
     void 회원_생성() throws JsonProcessingException {
         MemberCreateReqDto dto = MemberCreateReqDto.builder()
-                .id("testCustom002")
+                .memberId("testCustom002")
                 .name("회원002")
                 .email("testCustom002@naver.com")
                 .mallNo(1L)
@@ -94,7 +95,7 @@ class MemberServiceTest {
     @DisplayName("회원 생성 서비스 실패 로직 검증")
     void 회원_생성_실패() {
         MemberCreateReqDto dto = MemberCreateReqDto.builder()
-                .id("testCustom001")
+                .memberId("testCustom001")
                 .name("회원001")
                 .email("testCustom001@naver.com")
                 .mallNo(1L)
@@ -104,7 +105,7 @@ class MemberServiceTest {
         memberService.save(dto);
 
         MemberCreateReqDto dto2 = MemberCreateReqDto.builder()
-                .id("testCustom001")
+                .memberId("testCustom001")
                 .name("회원001")
                 .email("testCustom001@naver.com")
                 .mallNo(1L)
@@ -129,14 +130,14 @@ class MemberServiceTest {
 
         MemberUpdateReqDto updateDto = MemberUpdateReqDto
                 .builder()
-                .id(memberId)
+                .memberId(memberId)
                 .mallNo(mallNo)
                 .phNumber("010-9999-9999")
                 .birthdate(LocalDate.of(2000, 10, 10))
                 .build();
 
         memberService.update(updateDto);
-        MemberSearchResDto updatedMall = memberService.findByMallNoAndId(mallNo, memberId);
+        MemberSearchResDto updatedMall = memberService.findByMallNoAndMemberId(mallNo, memberId);
         log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(updatedMall));
     }
 
@@ -148,7 +149,7 @@ class MemberServiceTest {
 
         MemberUpdateReqDto updateDto = MemberUpdateReqDto
                 .builder()
-                .id(memberId)
+                .memberId(memberId)
                 .mallNo(mallNo)
                 .phNumber("010-9999-9999")
                 .birthdate(LocalDate.of(2000, 10, 10))
@@ -170,7 +171,7 @@ class MemberServiceTest {
 
         MemberUpdateReqDto updateDto = MemberUpdateReqDto
                 .builder()
-                .id(memberId)
+                .memberId(memberId)
                 .mallNo(mallNo)
                 .phNumber("010-9999-9999")
                 .birthdate(LocalDate.of(2000, 10, 10))

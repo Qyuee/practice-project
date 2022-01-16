@@ -4,6 +4,7 @@ import com.practice.project.exception.exhandler.ApiBadRequestException;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -69,6 +70,13 @@ public class ApiExceptionControllerAdvice {
     public ResponseEntity<ErrorResponse> ConstraintViolationExHandler(ConstraintViolationException e) {
         return ResponseEntity.status(ErrorCase.BAD_REQUEST.getHttpStatus().value())
                 .body(new ErrorResponse(ErrorCase.BAD_REQUEST, test(e.getConstraintViolations().iterator())));
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> DataIntegrityViolationExHandler(DataIntegrityViolationException e) {
+        return ResponseEntity.status(ErrorCase.BAD_REQUEST.getHttpStatus().value())
+                .body(new ErrorResponse(ErrorCase.BAD_REQUEST, e.getMessage()));
     }
 
     public String convertTypeMissExMsg(MethodArgumentTypeMismatchException e) {

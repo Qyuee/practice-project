@@ -4,6 +4,8 @@ import com.practice.project.domain.common.BaseTime;
 import com.practice.project.domain.common.Gender;
 import com.practice.project.domain.statusinfo.MemberStatus;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -13,48 +15,50 @@ import java.util.Optional;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "member")
+@Table(name = "MEMBER")
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
+@DynamicInsert
 public class Member extends BaseTime {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "member_no", nullable = false, updatable = false)
+    @Column(name = "MEMBER_NO", nullable = false, updatable = false)
     private Long no;
 
     @ManyToOne
-    @JoinColumn(name = "mall_no", nullable = false, updatable = false)
+    @JoinColumn(name = "MALL_NO", nullable = false, updatable = false)
     private Mall mall;
 
-    @ManyToOne
-    @JoinColumn(name = "member_address_no")
-    private MemberAddress memberAddress;
+    @Column(name = "MEMBER_ID", unique = true, nullable = false, updatable = false)
+    private String memberId;
 
-    @Column(name = "id", unique = true, nullable = false, updatable = false)
-    private String id;
-
-    @Column(name = "name", length = 10, nullable = false, updatable = false)
+    @Column(name = "NAME", length = 10, nullable = false, updatable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", length = 2)
+    @Column(name = "GENDER", length = 2)
     private Gender gender;
 
-    @Column(name = "email", length = 50, unique = true, updatable = false, nullable = false)
+    @Column(name = "EMAIL", length = 50, unique = true, updatable = false, nullable = false)
     private String email;
 
-    @Column(name = "phone_number", length = 14)
+    @Column(name = "PHONE_NUMBER", length = 14)
     private String phNumber;
 
-    @Column(name = "birthdate")
+    @Column(name = "BIRTHDATE")
     private LocalDate birthdate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 10, columnDefinition = "varchar(10) default 'ACTIVE'")
+    @Column(name = "STATUS", length = 10, columnDefinition = "varchar(10) default 'ACTIVE'")
     private MemberStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_ADDR_ID")
+    private MemberAddress memberAddress;
 
     // 수정 메소드(제한적인 setter)
     public void changePhNumber(String phNumber) {

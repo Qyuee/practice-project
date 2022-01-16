@@ -8,6 +8,7 @@ import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import com.practice.project.repository.MallRepository;
 import com.practice.project.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -27,13 +29,13 @@ public class MemberService {
      * 회원 생성
      */
     @Transactional
-    public MemberCreateResDto save(MemberCreateReqDto dto) {
+    public MemberCreateResDto save(MemberCreateReqDto reqDto) {
         // id, email에 해당하는 회원이 존재하는가?
         // 존재하지 않으면 신규생성
         // 존재하면 update
         // 이렇게 service로직을 공유하면 변경되면 안되는 항목에 변경이 발생 할 수도 있을 듯. 혼란스러움
-        validateSaveMember(dto);
-        Member member = MemberCreateReqDto.toEntity(dto);
+        validateSaveMember(reqDto);
+        Member member = MemberCreateReqDto.toEntity(reqDto);
         return MemberCreateResDto.toDto(memberRepository.save(member));
     }
 
@@ -47,7 +49,7 @@ public class MemberService {
             throw new ApiResourceNotFoundException("Mall not exist.");
         });
 
-        return memberRepository.findByMallAndId(oPtMall.get(), dto.getId()).map(member -> {
+        return memberRepository.findByMallAndMemberId(oPtMall.get(), dto.getMemberId()).map(member -> {
             member.changePhNumber(dto.getPhNumber());
             member.changeBirthDate(dto.getBirthdate());
             return MemberUpdateResDto.toDto(member);
@@ -65,9 +67,9 @@ public class MemberService {
         validateDeleteMember();
 
         return mallRepository.findByNo(mallNo).map(mall ->
-                memberRepository.findByMallAndId(mall, id).map(member -> {
+                memberRepository.findByMallAndMemberId(mall, id).map(member -> {
                     memberRepository.delete(member);
-                    return MemberSimpleResDto.builder().mallNo(mallNo).id(id).build();
+                    return MemberSimpleResDto.builder().mallNo(mallNo).memberId(id).build();
                 }).orElseThrow(() -> {
                     throw new ApiResourceNotFoundException("Member not exist.");
                 })).orElseThrow(() -> {
@@ -100,9 +102,9 @@ public class MemberService {
     /**
      * 특정 몰 회원 검색
      */
-    public MemberSearchResDto findByMallNoAndId(Long mallNo, String id) {
+    public MemberSearchResDto findByMallNoAndMemberId(Long mallNo, String memberId) {
         return mallRepository.findByNo(mallNo).map(mall -> {
-            return memberRepository.findByMallAndId(mall, id).map(MemberSearchResDto::toDto).orElseThrow(() -> {
+            return memberRepository.findByMallAndMemberId(mall, memberId).map(MemberSearchResDto::toDto).orElseThrow(() -> {
                 throw new ApiResourceNotFoundException("Member not exist.");
             });
         }).orElseThrow(() -> {
@@ -118,7 +120,6 @@ public class MemberService {
         memberRepository.deleteAllByMall(mall);
     }
 
-
     /**
      * 회원 생성 검증
      */
@@ -129,8 +130,8 @@ public class MemberService {
         });
 
         // 회원ID, Email 중복 여부 확인
-        if (memberRepository.existsMembersById(dto.getId())) {
-            throw new ApiResourceConflictException("'" + dto.getId() + "' was already used.");
+        if (memberRepository.existsMembersByMemberId(dto.getMemberId())) {
+            throw new ApiResourceConflictException("'" + dto.getMemberId() + "' was already used.");
         }
 
         if (memberRepository.existsMembersByEmail(dto.getEmail())) {

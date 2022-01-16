@@ -2,14 +2,12 @@ package com.practice.project.domain;
 
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.BaseTime;
-import com.practice.project.domain.statusinfo.MallStatus;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -24,19 +22,19 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Admin extends BaseTime {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "admin_no", nullable = false, updatable = false)
+    @Column(name = "ADMIN_NO", nullable = false, updatable = false)
     private Long no;
 
-    @Column(name = "id", unique = true, updatable = false, nullable = false)
-    private String id;
+    @Column(name = "ADMIN_ID", unique = true, updatable = false, nullable = false)
+    private String adminId;
 
-    @Column(name = "email", length = 50, unique = true, updatable = false, nullable = false)
+    @Column(name = "EMAIL", length = 50, unique = true, updatable = false, nullable = false)
     private String email;
 
-    @Column(name = "name", updatable = false, nullable = false)
+    @Column(name = "NAME", updatable = false, nullable = false)
     private String name;
 
-    @Column(name = "phone_number")
+    @Column(name = "PHONE_NUMBER")
     private String phNumber;
 
     @Embedded

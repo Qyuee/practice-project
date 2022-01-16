@@ -1,7 +1,6 @@
 package com.practice.project.service;
 
 import com.practice.project.domain.Admin;
-import com.practice.project.dto.AdminDto;
 import com.practice.project.dto.AdminDto.AdminCreateReqDto;
 import com.practice.project.dto.AdminDto.AdminResDto;
 import com.practice.project.dto.AdminDto.AdminSimpleResDto;
@@ -37,8 +36,8 @@ public class AdminService {
     }
 
     @Transactional
-    public AdminResDto update(Long no, AdminUpdateReqDto reqDto) {
-        Optional<Admin> optAdmin = adminRepository.findById(no);
+    public AdminResDto update(String adminId, AdminUpdateReqDto reqDto) {
+        Optional<Admin> optAdmin = adminRepository.findByAdminId(adminId);
         optAdmin.orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
         });
@@ -59,12 +58,10 @@ public class AdminService {
         return admin.get();
     }
 
-    public AdminResDto findById(String id) {
-        Optional<Admin> admin = adminRepository.findById(id);
-        admin.orElseThrow(() -> {
+    public AdminResDto findByAdminId(String id) {
+        return adminRepository.findByAdminId(id).map(AdminResDto::toDto).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
         });
-        return AdminResDto.toDto(admin.get());
     }
 
     public List<AdminResDto> findAdmins(Pageable pageable) {
@@ -72,12 +69,13 @@ public class AdminService {
     }
 
     @Transactional
-    public AdminSimpleResDto removeAdmin(Long no) {
-        Optional<Admin> admin = adminRepository.findById(no);
-        admin.orElseThrow(() -> {
+    public AdminSimpleResDto removeByAdminId(String adminId) {
+        return adminRepository.findByAdminId(adminId).map(admin -> {
+            adminRepository.delete(admin);
+            return AdminSimpleResDto.toDto(admin);
+        }).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
         });
-        return AdminSimpleResDto.toDto(admin.get());
     }
 
     /**
@@ -85,7 +83,7 @@ public class AdminService {
      * - 아이디, 이메일
      */
     private void validateDuplicateAdmin(AdminCreateReqDto reqDto) {
-        if (adminRepository.existsByIdOrEmail(reqDto.getId(), reqDto.getEmail())) {
+        if (adminRepository.existsByAdminIdOrEmail(reqDto.getAdminId(), reqDto.getEmail())) {
             throw new ApiResourceConflictException("Admin already exists.");
         }
     }

@@ -22,7 +22,7 @@ class MallDtoTest {
 
         Admin admin = Admin.builder()
                 .no(1L)
-                .id("lee33398")
+                .adminId("lee33398")
                 .name("이동석")
                 .email("lee33398@naver.com")
                 .build();
@@ -52,7 +52,7 @@ class MallDtoTest {
 
         Admin admin = Admin.builder()
                 .no(1L)
-                .id("lee33398")
+                .adminId("lee33398")
                 .name("이동석")
                 .email("lee33398@naver.com")
                 .build();

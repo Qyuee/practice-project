@@ -16,7 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "mall")
+@Table(name = "MALL")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -24,25 +24,25 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Mall extends BaseTime {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "mall_no", nullable = false, updatable = false)
+    @Column(name = "MALL_NO", nullable = false, updatable = false)
     private Long no;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "admin_no", nullable = false, updatable = false)
+    @JoinColumn(name = "ADMIN_NO", nullable = false, updatable = false)
     private Admin admin;
 
-    @Column(name = "name", length = 50, nullable = false, unique = true)
+    @Column(name = "NAME", length = 50, nullable = false, unique = true)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "country_type", length = 2, nullable = false, updatable = false)
+    @Column(name = "COUNTRY_TYPE", length = 2, nullable = false, updatable = false)
     private Country countryType;
 
     @Embedded
     private Address address;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 10, columnDefinition = "varchar(10) default 'NORMAL'")
+    @Column(name = "STATUS", length = 10, columnDefinition = "varchar(10) default 'NORMAL'")
     private MallStatus mallStatus;
 
     @OneToMany(mappedBy = "mall")

@@ -44,54 +44,20 @@ class MallServiceTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    //@BeforeAll
-    /*@Transactional
-    void 테스트_데이터_설정() {
-        Admin admin1 = Admin.builder()
-                .id("lee33398")
-                .name("이동석")
-                .email("lee33398@naver.com")
-                .build();
-        adminRepository.save(admin1);
-
-        Admin admin2 = Admin.builder()
-                .id("lee33397")
-                .name("홍길동")
-                .email("lee33397@naver.com")
-                .build();
-        adminRepository.save(admin2);
-
-        for (Country value : Country.values()) {
-            mallRepository.save(Mall.builder().name("admin1 테스트몰 "+value.name())
-                    .admin(admin1)
-                    .countryType(value)
-                    .build()
-            );
-        }
-
-        for (Country value : Country.values()) {
-            mallRepository.save(Mall.builder().name("admin2 테스트몰 "+value.name())
-                    .admin(admin2)
-                    .countryType(value)
-                    .build()
-            );
-        }
-    }*/
-
     @Test
     @DisplayName("몰 정보 저장")
     @Transactional
     //@Rollback(value = false)
     void 몰_save() throws Exception {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("test001")
+                .adminId("test001")
                 .name("이동석")
                 .email("test001@naver.com")
                 .build();
         adminService.save(reqDto);
 
         MallCreateReqDto req = MallCreateReqDto.builder()
-                .adminId(reqDto.getId())
+                .adminId(reqDto.getAdminId())
                 .mallName("테스트몰")
                 .countryType(Country.KR)
                 .build();
@@ -106,14 +72,14 @@ class MallServiceTest {
     //@Rollback(value = false) // -> 이 부분이 'Transaction silently rolled back because it has been marked as rollback-only' 발생
     void 몰_save_국가중복() throws Exception {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("test001")
+                .adminId("test001")
                 .name("이동석")
                 .email("test001@naver.com")
                 .build();
         adminService.save(reqDto);
 
         MallCreateReqDto req = MallCreateReqDto.builder()
-                .adminId(reqDto.getId())
+                .adminId(reqDto.getAdminId())
                 .mallName("테스트몰")
                 .countryType(Country.KR)
                 .build();
@@ -121,7 +87,7 @@ class MallServiceTest {
 
         // 몰 2번, 운영자 동일
         MallCreateReqDto req2 = MallCreateReqDto.builder()
-                .adminId(reqDto.getId())
+                .adminId(reqDto.getAdminId())
                 .mallName("테스트몰2")
                 .countryType(Country.KR)
                 .build();
@@ -140,21 +106,21 @@ class MallServiceTest {
     @Transactional
     void 몰_save_몰_이름_중복() throws Exception {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("test001")
+                .adminId("test001")
                 .name("이동석")
                 .email("test001@naver.com")
                 .build();
         adminService.save(reqDto);
 
         MallCreateReqDto req1 = MallCreateReqDto.builder()
-                .adminId(reqDto.getId())
+                .adminId(reqDto.getAdminId())
                 .mallName("테스트몰")
                 .countryType(Country.EN)
                 .build();
         mallService.save(req1);
 
         MallCreateReqDto req2 = MallCreateReqDto.builder()
-                .adminId(reqDto.getId())
+                .adminId(reqDto.getAdminId())
                 .mallName("테스트몰")
                 .countryType(Country.KR)
                 .build();
@@ -173,11 +139,10 @@ class MallServiceTest {
     @Rollback(value = false)
     void 몰_save_admin_없음() {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("lee33398")
-                .name("이동석")
-                .email("lee33398@naver.com")
+                .adminId("unknown")
+                .name("존재하지않는 계정")
+                .email("unknown@naver.com")
                 .build();
-        adminService.save(reqDto);
 
         MallCreateReqDto req = MallCreateReqDto.builder()
                 .admin(AdminCreateReqDto.toEntity(reqDto))
@@ -185,7 +150,12 @@ class MallServiceTest {
                 .countryType(Country.KR)
                 .build();
 
-        mallService.save(req);
+        ApiResourceNotFoundException exception = Assertions.assertThrows(ApiResourceNotFoundException.class, () -> {
+            mallService.save(req);
+        });
+
+        String message = exception.getMessage();
+        assertEquals(message, "Admin not exist.");
     }
 
     @Test
@@ -227,8 +197,10 @@ class MallServiceTest {
     void 몰_정보_수정() {
         // given
         String adminId = "lee33397";
+
         Long mallNo = 1L;
         MallUpdateReqDto reqDto = MallUpdateReqDto.builder()
+                .adminId(adminId)
                 .mallName("수정되는 몰 이름")
                 .address(Address.builder()
                         .country(Country.EN)
@@ -252,10 +224,12 @@ class MallServiceTest {
     @Order(9)
     void 몰_정보_수정_실패() {
         // given
+        String adminId = "lee33398";
         Long mallNo = 100L; // 존재하지 않는 몰no 정보
 
         // when
         MallUpdateReqDto reqDto = MallUpdateReqDto.builder()
+                .adminId(adminId)
                 .mallName("수정되는 몰 이름")
                 .address(Address.builder()
                         .country(Country.EN)
@@ -267,7 +241,7 @@ class MallServiceTest {
             mallService.update(mallNo, reqDto);
         }, "몰 정보 존재하지 않기에 에러 발생");
         String message = exception.getMessage();
-        assertEquals(message, "Mall not exist.");
+        assertEquals("Mall not exist.",message);
     }
 
     @Test

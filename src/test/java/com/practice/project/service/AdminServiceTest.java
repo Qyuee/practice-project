@@ -2,7 +2,6 @@ package com.practice.project.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.practice.project.domain.Admin;
 import com.practice.project.domain.common.Address;
 import com.practice.project.domain.common.Country;
 import com.practice.project.dto.AdminDto.AdminCreateReqDto;
@@ -43,7 +42,7 @@ class AdminServiceTest {
     @Rollback(value = false)
     void join_운영자() throws JsonProcessingException {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("testAdmin")
+                .adminId("testAdmin")
                 .name("홍길동")
                 .email("testAdmin@naver.com")
                 .build();
@@ -66,7 +65,7 @@ class AdminServiceTest {
     @Test
     void join_운영자_아이디중복() {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("lee33398")
+                .adminId("lee33398")
                 .name("이동석")
                 .email("lee33398@naver.com")
                 .build();
@@ -82,9 +81,8 @@ class AdminServiceTest {
     @Test
     @Rollback(value = false)
     void update_운영자() {
-        Long no = 1L;
         // given
-        Admin beforeAdmin = adminService.findOne(no);
+        String adminId = "lee33398";
 
         // when
         AdminUpdateReqDto reqDto = AdminUpdateReqDto.builder()
@@ -98,11 +96,11 @@ class AdminServiceTest {
                 .phNumber("000-0000-0000")
                 .build();
 
-        adminService.update(no, reqDto);
+        adminService.update(adminId, reqDto);
 
         // then
-        Admin afterAdmin = adminService.findOne(no);
-        assertEquals(afterAdmin.getAddress().getCountry(), reqDto.getAddress().getCountry());
+        AdminResDto afterAdminDto = adminService.findByAdminId(adminId);
+        assertEquals(afterAdminDto.getAddress().getCountry(), reqDto.getAddress().getCountry());
     }
 
     @Test
@@ -112,10 +110,10 @@ class AdminServiceTest {
         String id = "lee33398";
 
         // when
-        AdminResDto resDto = adminService.findById(id);
+        AdminResDto resDto = adminService.findByAdminId(id);
 
         // then
-        assertEquals(resDto.getId(), id);
+        assertEquals(resDto.getAdminId(), id);
     }
 
     @Test
@@ -135,24 +133,24 @@ class AdminServiceTest {
     @DisplayName("운영자 삭제")
     void 운영자_삭제() {
         // given
-        Long no = 1L;
+        String adminId = "lee33398";
 
         // when
-        AdminSimpleResDto resDto = adminService.removeAdmin(no);
+        AdminSimpleResDto resDto = adminService.removeByAdminId(adminId);
 
         // then
-        assertEquals(resDto.getNo(), no);
+        assertEquals(resDto.getAdminId(), adminId);
     }
 
     @Test
     @DisplayName("운영자 삭제 - 존재하지 않는 운영자")
     void 존재하지않는_운영자_삭제() {
         // given
-        Long no = 100L;
+        String adminId = "lee333912";
 
         // when
         ApiResourceNotFoundException exception = assertThrows(ApiResourceNotFoundException.class, () -> {
-            adminService.removeAdmin(no);
+            adminService.removeByAdminId(adminId);
         });
 
         // then

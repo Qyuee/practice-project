@@ -2,7 +2,6 @@ package com.practice.project.service;
 
 import com.practice.project.domain.Mall;
 import com.practice.project.domain.statusinfo.MallStatus;
-import com.practice.project.dto.MallDto;
 import com.practice.project.dto.MallDto.MallCreateReqDto;
 import com.practice.project.dto.MallDto.MallResDto;
 import com.practice.project.dto.MallDto.MallStatusResDto;
@@ -58,7 +57,7 @@ public class MallService {
     }
 
     public List<MallResDto> findByAdminId(String id) {
-        return adminRepository.findById(id).map(admin ->
+        return adminRepository.findByAdminId(id).map(admin ->
                 mallRepository.findByAdmin(admin).stream().map(MallResDto::toDto).collect(Collectors.toList())
         ).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
@@ -66,7 +65,7 @@ public class MallService {
     }
 
     public MallResDto findByNo(String adminId, Long no) {
-        return adminRepository.findById(adminId).map(admin -> {
+        return adminRepository.findByAdminId(adminId).map(admin -> {
             return mallRepository.findByAdminAndNo(admin, no).map(MallResDto::toDto).orElseThrow(() -> {
                 throw new ApiResourceNotFoundException("Mall not exist.");
             });
@@ -77,7 +76,7 @@ public class MallService {
 
     @Transactional
     public MallResDto update(Long no, MallUpdateReqDto reqDto) {
-        adminRepository.findById(reqDto.getAdminId()).orElseThrow(() -> {
+        adminRepository.findByAdminId(reqDto.getAdminId()).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
         });
 
@@ -92,7 +91,7 @@ public class MallService {
 
     @Transactional
     public MallStatusResDto updateStatus(String adminId, Long mallNo, MallStatus status) {
-        adminRepository.findById(adminId).orElseThrow(() -> {
+        adminRepository.findByAdminId(adminId).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
         });
 
@@ -106,7 +105,7 @@ public class MallService {
 
     @Transactional
     public MallResDto delete(String adminId, Long no) {
-        adminRepository.findById(adminId).orElseThrow(() -> {
+        adminRepository.findByAdminId(adminId).orElseThrow(() -> {
             throw new ApiResourceNotFoundException("Admin not exist.");
         });
 
@@ -121,10 +120,10 @@ public class MallService {
 
     private void validateSaveMall(MallCreateReqDto reqDto) {
         // 운영자 ID기반 존재여부 확인
-        adminRepository.findById(reqDto.getAdminId()).ifPresentOrElse(admin -> {
+        adminRepository.findByAdminId(reqDto.getAdminId()).ifPresentOrElse(admin -> {
             reqDto.setAdmin(admin);
         }, () -> {
-            throw new ApiResourceConflictException("Admin not exist.");
+            throw new ApiResourceNotFoundException("Admin not exist.");
         });
 
         // 몰 이름 중복 여부 확인

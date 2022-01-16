@@ -3,10 +3,10 @@ package com.practice.project.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "delivery")
+@Table(name = "DELIVERY")
 public class Delivery {
     @Id
     @GeneratedValue
-    @Column(name = "delivery_no")
-    private Long no;
+    @Column(name = "DELIVERY_ID")
+    private Long id;
 }

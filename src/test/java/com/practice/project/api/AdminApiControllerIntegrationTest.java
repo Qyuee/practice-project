@@ -6,6 +6,7 @@ import com.practice.project.domain.common.Country;
 import com.practice.project.dto.AdminDto.AdminCreateReqDto;
 import com.practice.project.dto.AdminDto.AdminUpdateReqDto;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
+import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @SpringBootTest
+@ActiveProfiles("mysql")
 @AutoConfigureMockMvc
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -44,7 +47,7 @@ class AdminApiControllerIntegrationTest {
     @DisplayName("POST /api/admins")
     void POST_운영자_등록() throws Exception {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("testAdmin001")
+                .adminId("testAdmin001")
                 .name("테스트어드민001")
                 .email("testAdmin001@naver.com")
                 .phNumber("010-0000-1234")
@@ -56,15 +59,15 @@ class AdminApiControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())    // 201
-                .andExpect(jsonPath("$['data'].no").exists())
-                .andExpect(jsonPath("$['data'].id").value("testAdmin001"));
+                //.andExpect(jsonPath("$['data'].no").exists())
+                .andExpect(jsonPath("$['data'].admin_id").value("testAdmin001"));
     }
 
     @Test
     @DisplayName("POST /api/admins 운영자 등록 예외 테스트 - ID or Email 중복")
     void 운영자_등록_이름_이메일_중복() throws Exception {
         AdminCreateReqDto reqDto = AdminCreateReqDto.builder()
-                .id("lee33397")     // 이미 존재하는 운영자ID
+                .adminId("lee33397")     // 이미 존재하는 운영자ID
                 .name("테스트어드민001")
                 .email("testAdmin001@naver.com")
                 .phNumber("010-0000-1234")
@@ -98,8 +101,9 @@ class AdminApiControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("PUT /api/admins/{no}")
+    @DisplayName("PUT /api/admins/{admin_id}")
     void PUT_운영자정보_수정() throws Exception {
+        String adminId = "lee33398";
         AdminUpdateReqDto reqDto = AdminUpdateReqDto.builder()
                 .address(Address.builder()
                         .country(Country.CH)
@@ -108,7 +112,7 @@ class AdminApiControllerIntegrationTest {
                 .phNumber("010-1111-1111")
                 .build();
 
-        mockMvc.perform(put("/api/admins/{no}", "1")
+        mockMvc.perform(put("/api/admins/{admin_id}", adminId)
                         .content(objectMapper.writeValueAsString(reqDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -127,19 +131,19 @@ class AdminApiControllerIntegrationTest {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$['data']").exists())      // 'data' 요소가 존재하는지?
-                .andExpect(jsonPath("$['data'][0]['id']").value("lee33397"))     // 동일성 비교: data.0.id가 lee33397인지?
+                .andExpect(jsonPath("$['data'][0]['admin_id']").value("lee33397"))     // 동일성 비교: data.0.id가 lee33397인지?
                 .andExpect(jsonPath("$..address[?(@.detail_address == '%s')]", "강서구").exists()) // data[N].address.detail_address에 '강서구' 값이 존재하는가?
                 .andExpect(jsonPath("$..address[?(@.detail_address == '%s')]", "중구").doesNotExist())  // data[N].address.detail_address에 '동대문구' 값이 존재하지 않는가?
-                .andExpect(jsonPath("$['data'][0]['id']", startsWith("lee")))   // data.0.id가 "lee"로 시작하는가?
+                .andExpect(jsonPath("$['data'][0]['admin_id']", startsWith("lee")))   // data.0.id가 "lee"로 시작하는가?
                 .andExpect(jsonPath("$['data'][%s].name", 0).value("이동석"))  // data.0.name이 '이동석'인가?
-                .andExpect(jsonPath("$..['id']").exists());     // 'id' 요소가 결과에 존재하는지?
+                .andExpect(jsonPath("$..['admin_id']").exists());     // 'id' 요소가 결과에 존재하는지?
         //.andExpect(jsonPath("$['data'][1].id", "lee33398").exists());
     }
 
     @Test
-    @DisplayName("GET /api/admins/{id}")
+    @DisplayName("GET /api/admins/{admin_id}")
     void GET_운영자_조회_by_id() throws Exception {
-        mockMvc.perform(get("/api/admins/{id}", "lee33397")
+        mockMvc.perform(get("/api/admins/{admin_id}", "lee33397")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andDo(result -> {
@@ -148,29 +152,29 @@ class AdminApiControllerIntegrationTest {
                     log.info(responseBody);
                 })
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$['data'].id", "lee33397").exists());
+                .andExpect(jsonPath("$['data'].admin_id", "lee33397").exists());
     }
 
     @Test
-    @DisplayName("DELETE /api/admins/{no}")
+    @DisplayName("DELETE /api/admins/{admin_id}")
     void DELETE_운영자() throws Exception {
-        Long no = 1L;
-        mockMvc.perform(delete("/api/admins/{no}", no)
+        String adminId = "lee33398";
+        mockMvc.perform(delete("/api/admins/{admin_id}", adminId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$['data']['no']").value(no));
+                .andExpect(jsonPath("$['data'].admin_id").value(adminId));
     }
 
     @Test
-    @DisplayName("DELETE /api/admins/{no} - 유효하지않은 값")
+    @DisplayName("DELETE /api/admins/{admin_id} - 유효하지않은 값")
     void DELETE_운영자_유효하지않는_경우() throws Exception {
-        mockMvc.perform(delete("/api/admins/{no}", "s")
+        mockMvc.perform(delete("/api/admins/{admin_id}", "s")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentTypeMismatchException));
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ApiResourceNotFoundException));
     }
 }

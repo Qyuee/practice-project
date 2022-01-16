@@ -38,7 +38,7 @@ class MallRepositoryTest {
     void 테스트_데이터_설정() {
         for (int i = 0; i < 10; i++) {
             Admin admin = Admin.builder()
-                    .id("lee3339"+i)
+                    .adminId("lee3339"+i)
                     .name("이동석")
                     .email("lee3339"+i+"@naver.com")
                     .build();
@@ -116,7 +116,7 @@ class MallRepositoryTest {
     @Rollback(value = false)
     void 몰_저장_테스트_fk_not_null() {
         Admin admin = Admin.builder()
-                .id("lee33398")
+                .adminId("lee33398")
                 .name("이동석")
                 .email("lee33398@naver.com")
                 .build();

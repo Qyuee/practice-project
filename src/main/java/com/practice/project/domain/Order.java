@@ -12,22 +12,21 @@ import java.util.List;
 public class Order extends BaseTime {
     @Id
     @GeneratedValue
-    @Column(name = "order_no")
-    private Long no;
+    @Column(name = "ORDER_ID")
+    private Long id;
 
     // 배송상태는 1:1
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_no")
+    @JoinColumn(name = "DELIVERY_ID")
     private Delivery delivery;
 
     // 여러갸의 주문은 하나의 회원에 속한다.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_no")
+    @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
     // @TODO cascade 타입에 대해서 정리필요
-    // 주문상품 정보
-    // 하나의 주문은 여러개의 주문상품을 가질 수 있다.
+    // 주문상품 정보 - 하나의 주문은 여러개의 주문상품을 가질 수 있다.
     @OneToMany(mappedBy = "order")
     private List<OrderProduct> orderProducts = new ArrayList<>();
 

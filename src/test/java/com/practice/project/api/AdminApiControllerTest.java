@@ -1,13 +1,9 @@
 package com.practice.project.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.practice.project.domain.Admin;
-import com.practice.project.dto.AdminDto;
 import com.practice.project.dto.AdminDto.AdminResDto;
-import com.practice.project.repository.AdminRepository;
 import com.practice.project.service.AdminService;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +11,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
@@ -28,7 +22,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -49,9 +42,6 @@ class AdminApiControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     private AdminService adminService;
 
@@ -70,7 +60,7 @@ class AdminApiControllerTest {
         List<AdminResDto> resDtoList = new ArrayList<>();
         resDtoList.add(AdminResDto.builder()
                 .no(1L)
-                .id("lee33398")
+                .adminId("lee33398")
                 .name("이동석")
                 .email("lee33398")
                 .build());

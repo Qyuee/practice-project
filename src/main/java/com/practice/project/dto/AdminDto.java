@@ -1,5 +1,6 @@
 package com.practice.project.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.practice.project.domain.Admin;
@@ -24,7 +25,7 @@ public class AdminDto {
     @AllArgsConstructor
     public static class AdminCreateReqDto {
         @NotBlank(message = "Admin's id required")
-        private String id;
+        private String adminId;
 
         @NotBlank(message = "Admin's name required")
         private String name;
@@ -38,7 +39,7 @@ public class AdminDto {
 
         public static Admin toEntity(AdminCreateReqDto dto) {
             return Admin.builder()
-                    .id(dto.getId())
+                    .adminId(dto.getAdminId())
                     .name(dto.getName())
                     .email(dto.getEmail())
                     .phNumber(dto.getPhNumber())
@@ -68,8 +69,9 @@ public class AdminDto {
     @NoArgsConstructor(access = PROTECTED)
     @AllArgsConstructor
     public static class AdminResDto {
+        @JsonIgnore
         private Long no;
-        private String id;
+        private String adminId;
         private String name;
         private String email;
         private Address address;
@@ -83,9 +85,11 @@ public class AdminDto {
      * Simple Admin Response Dto
      */
     @Data
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class AdminSimpleResDto {
+        @JsonIgnore
         private Long no;
-        private String id;
+        private String adminId;
 
         public static AdminSimpleResDto toDto(Admin admin) {
             return ModelMapperUtils.getModelMapper().map(admin, AdminSimpleResDto.class);

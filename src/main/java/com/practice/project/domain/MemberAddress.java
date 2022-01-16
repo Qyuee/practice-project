@@ -8,7 +8,7 @@ import javax.persistence.*;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "member_address")
+@Table(name = "MEMBER_ADDR")
 @DynamicUpdate
 @Getter
 @Builder
@@ -17,6 +17,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class MemberAddress {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "member_address_no")
-    private Long no;
+    @Column(name = "member_ADDR_ID")
+    private Long id;
 }
