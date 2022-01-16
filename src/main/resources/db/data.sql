@@ -18,6 +18,12 @@ values (1, 1, 'lee33397의 쇼핑몰', 'KR', 'KR', 'Seoul', '강남구', now());
 INSERT into mall (mall_no, admin_no, name, country_type, country, city, detail_address, created_date)
 values (2, 1, 'lee33397의 쇼핑몰 - EN', 'EN', 'KR', 'Seoul', '강남구', now());
 
+INSERT into mall (mall_no, admin_no, name, country_type, country, city, detail_address, created_date)
+values (3, 2, 'lee33398의 쇼핑몰', 'KR', 'KR', 'Seoul', '강남구', now());
+
+INSERT into mall (mall_no, admin_no, name, country_type, country, city, detail_address, created_date)
+values (4, 2, 'lee33398의 쇼핑몰 - EN', 'EN', 'EN', 'Seoul', '강남구', now());
+
 -- 회원 정보
 insert into member (mall_no, member_id, name, email, gender, phone_number, birthdate, status, created_date)
 values (1, 'custom001', '회원001', 'custom001@naver.com', 'F', '010-0000-0001', '1992-12-29', 'ACTIVE', now());

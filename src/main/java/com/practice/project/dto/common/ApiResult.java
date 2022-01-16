@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class Result<T> {
+public class ApiResult<T> {
     private int count;
     private T data;
 
-    public Result(T data) {
+    public ApiResult(T data) {
         this.data = data;
     }
 }

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 
 import static lombok.AccessLevel.PROTECTED;
 
+@NoArgsConstructor(access = PROTECTED)
 public class AdminDto {
 
     /**

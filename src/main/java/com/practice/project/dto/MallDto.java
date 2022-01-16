@@ -15,6 +15,9 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import static lombok.AccessLevel.PROTECTED;
+
+@NoArgsConstructor(access = PROTECTED)
 public class MallDto {
     /**
      * Mall Create Request Dto

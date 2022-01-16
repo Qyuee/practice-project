@@ -172,7 +172,7 @@ class MallServiceTest {
             log.info(mallResDto.toString());
         }
 
-        assertEquals(1, mallList.size());
+        assertEquals(2, mallList.size());
     }
 
     @Test

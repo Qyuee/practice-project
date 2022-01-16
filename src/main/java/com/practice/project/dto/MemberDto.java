@@ -15,10 +15,12 @@ import java.time.LocalDate;
 
 import static lombok.AccessLevel.PROTECTED;
 
-//@Todo 제네릭을 활용하여 중복되는 toEntity, toDto 통합처리
 /**
  * 정적 중첩 클래스를 사용하여 외부에서 바로 접근하여 사용 할 수 있도록 작성
  */
+
+//@Todo 제네릭을 활용하여 중복되는 toEntity, toDto 통합처리
+@NoArgsConstructor(access = PROTECTED)
 public class MemberDto {
     /**
      * Member Create Request Dto

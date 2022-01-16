@@ -43,16 +43,16 @@ public class MallService {
     }
 
     public List<MallResDto> findAll(Pageable pageable) {
+        /*
+        //@Todo 확인필요
         Sort sort = pageable.getSort();
         Iterator<Sort.Order> iterator = sort.iterator();
-        //@Todo 확인필요
         while (iterator.hasNext()) {
             Sort.Order next = iterator.next();
             log.info("property:{}", next.getProperty());
             log.info("direction:{}", next.getDirection().name());
-        }
+        }*/
         Page<Mall> mallPage = mallRepository.findAll(pageable);
-        log.info("totalPage:{}", mallPage.getTotalPages());
         return mallPage.stream().map(MallResDto::toDto).collect(Collectors.toList());
     }
 

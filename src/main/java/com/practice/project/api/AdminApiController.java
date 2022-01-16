@@ -4,7 +4,7 @@ import com.practice.project.dto.AdminDto.AdminCreateReqDto;
 import com.practice.project.dto.AdminDto.AdminResDto;
 import com.practice.project.dto.AdminDto.AdminSimpleResDto;
 import com.practice.project.dto.AdminDto.AdminUpdateReqDto;
-import com.practice.project.dto.common.Result;
+import com.practice.project.dto.common.ApiResult;
 import com.practice.project.service.AdminService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -35,40 +35,40 @@ public class AdminApiController {
     @PostMapping(value = "/admins")
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "운영자 가입", notes = "필수값: 아이디, 이메일, 이름")
-    public Result<AdminResDto> saveAdmin(@Valid @RequestBody AdminCreateReqDto reqDto) {
+    public ApiResult<AdminResDto> saveAdmin(@Valid @RequestBody AdminCreateReqDto reqDto) {
         AdminResDto save = adminService.save(reqDto);
-        return new Result<>(save);
+        return new ApiResult<>(save);
     }
 
     @GetMapping(value = "/admins")
     @ApiOperation(value = "운영자 목록 조회")
-    public Result<List<AdminResDto>> getAdmins(
+    public ApiResult<List<AdminResDto>> getAdmins(
             Pageable pageable) {
         List<AdminResDto> resDtoList = adminService.findAdmins(pageable);
-        return new Result<>(resDtoList.size(), resDtoList);
+        return new ApiResult<>(resDtoList.size(), resDtoList);
     }
 
     @GetMapping(value = "/admins/{admin_id}")
     @ApiOperation(value = "운영자 id 기반 조회")
-    public Result<AdminResDto> getAdminById(@PathVariable("admin_id") @NotBlank String adminId) {
+    public ApiResult<AdminResDto> getAdminById(@PathVariable("admin_id") @NotBlank String adminId) {
         AdminResDto resDto = adminService.findByAdminId(adminId);
-        return new Result<>(resDto);
+        return new ApiResult<>(resDto);
     }
 
     @PutMapping(value = "/admins/{admin_id}")
     //@Todo 타입이 맞지않는 경우 발생하는 예외응답 처리 필요
     @ApiOperation(value = "운영자 정보 일부 수정", notes = "필수값: 운영자 고유번호")
-    public Result<AdminResDto> updateAdmin(
+    public ApiResult<AdminResDto> updateAdmin(
             @PathVariable("admin_id") @NotNull String adminId,
             @RequestBody AdminUpdateReqDto reqDto) {
         AdminResDto resDto = adminService.update(adminId, reqDto);
-        return new Result<>(resDto);
+        return new ApiResult<>(resDto);
     }
 
     @DeleteMapping("/admins/{admin_id}")
     @ApiOperation(value = "운영자 삭제")
-    public Result<AdminSimpleResDto> deleteAdmin(@PathVariable("admin_id") @NotNull String adminId) {
+    public ApiResult<AdminSimpleResDto> deleteAdmin(@PathVariable("admin_id") @NotNull String adminId) {
         AdminSimpleResDto resDto = adminService.removeByAdminId(adminId);
-        return new Result<>(resDto);
+        return new ApiResult<>(resDto);
     }
 }

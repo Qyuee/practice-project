@@ -35,6 +35,9 @@ public class AdminService {
         return AdminResDto.toDto(newAdmin);
     }
 
+    /**
+     * 운영자 정보 수정
+     */
     @Transactional
     public AdminResDto update(String adminId, AdminUpdateReqDto reqDto) {
         Optional<Admin> optAdmin = adminRepository.findByAdminId(adminId);
@@ -80,7 +83,6 @@ public class AdminService {
 
     /**
      * 중복 운영자 가입여부 검증
-     * - 아이디, 이메일
      */
     private void validateDuplicateAdmin(AdminCreateReqDto reqDto) {
         if (adminRepository.existsByAdminIdOrEmail(reqDto.getAdminId(), reqDto.getEmail())) {

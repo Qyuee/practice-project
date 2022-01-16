@@ -123,8 +123,12 @@ DELETE /몰/{no}
     - 엔티티는 `@DynamicUpdate`를 통해서 변경된 항목만 수정하도록하고, 복합 값 타입은 객체를 불변객체로 생성하고 수정 시, 객체 자체를 재생성하여 등록하도록 수정
 - `완료` admin api controller mockMvc 테스트 케이스 작성
 - `완료` GET /api/admins -> pagenation 적용 필요
-- `진행중` 몰(Mall) Service Layer 테스트케이스 작성
-- `진행중` Pageable Validation 처리
+- `완료` 몰(Mall) Service Layer 테스트케이스 작성
+- `진행중 (hold)` Pageable Validation 처리
   - 유효하지 않는 파라미터 처리 -> 제외하고 값 응답
-  - 
-- `Todo` 몰(Mall) api 설계 필요
+- `완료` 몰(Mall) api 설계 필요
+- `진행중` 상품/카테고리/주문 도메인 설계
+
+### 6. 백로그
+- Spring Rest Docs 적용하기
+  - swagger에 비해서 장단점이 있음 (https://techblog.woowahan.com/2597/)

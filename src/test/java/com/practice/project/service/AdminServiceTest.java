@@ -8,7 +8,7 @@ import com.practice.project.dto.AdminDto.AdminCreateReqDto;
 import com.practice.project.dto.AdminDto.AdminResDto;
 import com.practice.project.dto.AdminDto.AdminSimpleResDto;
 import com.practice.project.dto.AdminDto.AdminUpdateReqDto;
-import com.practice.project.dto.common.Result;
+import com.practice.project.dto.common.ApiResult;
 import com.practice.project.exception.exhandler.ApiResourceConflictException;
 import com.practice.project.exception.exhandler.ApiResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -57,9 +57,9 @@ class AdminServiceTest {
 
         AdminResDto resDto = adminService.save(reqDto);
         Assertions.assertNotNull(resDto);
-        Result<AdminResDto> resultResDto = new Result<>(resDto);
+        ApiResult<AdminResDto> apiResultResDto = new ApiResult<>(resDto);
 
-        log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultResDto));
+        log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(apiResultResDto));
     }
 
     @Test

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @SpringBootTest
+@ActiveProfiles("mysql")
 @AutoConfigureMockMvc
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -55,7 +57,9 @@ class MallApiControllerIntegrationTest {
     @DisplayName("GET /api/malls")
     void GET_몰_리스트() throws Exception {
         mockMvc.perform(get("/api/malls")
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .param("page", String.valueOf(0))
+                        .param("size", String.valueOf(2)))
                 .andDo(print())
                 .andDo(result -> {
                     String responseBody = objectMapper.writerWithDefaultPrettyPrinter()
@@ -63,7 +67,7 @@ class MallApiControllerIntegrationTest {
                     log.info(responseBody);
                 })
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.['data']", hasSize(5)));
+                .andExpect(jsonPath("$['data']", hasSize(2)));
     }
 
     @Test
@@ -78,7 +82,7 @@ class MallApiControllerIntegrationTest {
                     log.info(responseBody);
                 })
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.['data']", hasSize(10)));
+                .andExpect(jsonPath("$['data']", hasSize(2)));
     }
 
     /*@Test
