@@ -1,5 +1,5 @@
 ### 기술스택
-SpringBoot, JPA, gradle, h2, swagger
+SpringBoot, JPA, gradle, h2, mysql, swagger
 
 ### 1. API 사양 설계
 #### 비즈니스 요구사항 및 설계
@@ -56,10 +56,8 @@ SpringBoot, JPA, gradle, h2, swagger
 - 회원정보 수정일 (LocalDateTime)
 
 ``상품 (product) -> TODO``
-- 123
 
 ``상품카테고리 -> TODO``
-- 123
 
 ``주문 -> TODO``
 - 주문ID (pk)
@@ -69,10 +67,6 @@ SpringBoot, JPA, gradle, h2, swagger
 - 배송일
 
 ``배송정보 -> TODO``
-- 배송정보ID (pk)
-- 배송상태 (enum)
-- 주소정보 -> embeded로 통합
-- 주문정보 -> (일대일, order)
 
 ### 3. 도메인 개발
 - DEFAULT DDL 작성
@@ -81,44 +75,7 @@ SpringBoot, JPA, gradle, h2, swagger
 - 도메인별 테스트 케이스 작성
 - 컨트롤러 작성
 
-### 4. api 설계
-``운영자(Admin) - Done``
-```
-GET /
- - pagenation 적용 필요 (default 값 필요)
-```
-
-```
-GET /운영자/운영자ID
- - 개인정보인 경우에는 암호화하여 확인 할 수 있도록 혹은 조회에서 제외
-
-PUT /운영자/운영자ID
- - 휴대전화 번호, 주소를 수정 할 수 있다.
-
-POST /운영자
- - 아이디 및 이메일 기반 중복검사
-
-DELETE /운영자/운영자NO
- - 운영자ID 기반으로 변경(?)
-
-```
-
-``몰(Mall) - DOING``
-```
-GET /몰
-GET /몰/{no}
-GET /몰/운영자/{ID}
-POST /몰
-- 201
-- 운영자가 없는 경우: 409 에러?
-
-PUT /몰/{no}
-- mall명, 주소정보 
-
-DELETE /몰/{no}
-```
-
-### 5. Todo/Doing List
+### 4. Todo/Doing List
 - `완료` 수정 API를 실행 할 때, 객체타입을 지닌 엔티티 처리 방식 확인 필요
     - 엔티티는 `@DynamicUpdate`를 통해서 변경된 항목만 수정하도록하고, 복합 값 타입은 객체를 불변객체로 생성하고 수정 시, 객체 자체를 재생성하여 등록하도록 수정
 - `완료` admin api controller mockMvc 테스트 케이스 작성
@@ -129,6 +86,6 @@ DELETE /몰/{no}
 - `완료` 몰(Mall) api 설계 필요
 - `진행중` 상품/카테고리/주문 도메인 설계
 
-### 6. 백로그
+### 5. 백로그
 - Spring Rest Docs 적용하기
   - swagger에 비해서 장단점이 있음 (https://techblog.woowahan.com/2597/)
